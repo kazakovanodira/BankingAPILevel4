@@ -1,43 +1,34 @@
-using banking_api_repo.Data;
 using banking_api_repo.Interface;
-using banking_api_repo.Models;
 using banking_api_repo.Models.Requests;
 using banking_api_repo.Models.Responses;
 
-namespace RESTAPIBankingApplication.Services;
+namespace banking_api_repo.Services;
 
 public class AccountsServices : IAccountsService
 {
-    private readonly AccountsContext _context;
-    
-    public AccountsServices(AccountsContext context)
+    private readonly IAccountRepository _accountRepository;
+    private readonly ICurrencyServices _currencyServices;
+
+    AccountsServices(IAccountRepository accountRepository, ICurrencyServices currencyServices)
     {
-        _context = context;
+        _accountRepository = accountRepository;
+        _currencyServices = currencyServices;
     }
 
     public ApiResponse<AccountResponse> CreateAccount(CreateAccountRequest request)
     {
-        var account = new Account
-        {
-            Name = request.Name,
-            Balance = 0,
-            AccountNumber = Guid.NewGuid(),
-        };
+        var newAccount = new AccountResponse(Guid.NewGuid(), request.Name, 0);
         
-        _context.Accounts.Add(account);
-        _context.SaveChanges();
-
         return new ApiResponse<AccountResponse>
         {
-            Result = new AccountResponse(account.AccountNumber, account.Name, account.Balance),
+            Result = _accountRepository.AddAccount(newAccount).Result,
             HttpStatusCode = 201
         };
     }
 
     public ApiResponse<AccountResponse> GetAccount(AccountRequest request)
     {
-        var account = _context.Accounts.FirstOrDefault(account => 
-            account.AccountNumber == request.AccountId);
+        var account = _accountRepository.GetAccountById(request);
         
         if (account is null)
         {
@@ -50,16 +41,19 @@ public class AccountsServices : IAccountsService
         
         return new ApiResponse<AccountResponse>
         {
-            Result = new AccountResponse(account.AccountNumber, account.Name, account.Balance),
+            Result = account.Result,
             HttpStatusCode = 200
         };
     }
 
     public ApiResponse<BalanceResponse> MakeDeposit(TransactionRequest request)
     {
-        var account = _context.Accounts.FirstOrDefault(account => 
-            account.AccountNumber == request.SenderAccId);
-        
+        var account = _accountRepository.GetAccountById(
+            new AccountRequest
+            {
+                AccountId = request.SenderAccId
+            });
+
         if (account is null)
         {
             return new ApiResponse<BalanceResponse>
@@ -69,21 +63,24 @@ public class AccountsServices : IAccountsService
             };
         }
         
-        account.Balance += request.Amount;
-        _context.SaveChanges();
-        
+        var newBalance = account.Result.Balance + request.Amount;
+        _accountRepository.UpdateAccount(new AccountResponse(request.SenderAccId, account.Result.Name, newBalance));
+
         return new ApiResponse<BalanceResponse>
         {
-            Result = new BalanceResponse(account.Balance),
+            Result = new BalanceResponse(account.Result.Balance),
             HttpStatusCode = 200
         };
     }
 
     public ApiResponse<BalanceResponse> MakeWithdraw(TransactionRequest request)
     {
-        var account = _context.Accounts.FirstOrDefault(account => 
-            account.AccountNumber == request.SenderAccId);
-        
+        var account = _accountRepository.GetAccountById(
+            new AccountRequest
+            {
+                AccountId = request.SenderAccId
+            });
+
         if (account is null)
         {
             return new ApiResponse<BalanceResponse>
@@ -92,8 +89,8 @@ public class AccountsServices : IAccountsService
                 HttpStatusCode = 404
             };
         }
-
-        if (account.Balance < request.Amount)
+        
+        if (account.Result.Balance < request.Amount)
         {
             return new ApiResponse<BalanceResponse>
             {
@@ -102,23 +99,30 @@ public class AccountsServices : IAccountsService
             };
         }
         
-        account.Balance -= request.Amount;
-        _context.SaveChanges();
-        
+        var newBalance = account.Result.Balance - request.Amount;
+        _accountRepository.UpdateAccount(new AccountResponse(request.SenderAccId, account.Result.Name, newBalance));
+
         return new ApiResponse<BalanceResponse>
         {
-            Result = new BalanceResponse(account.Balance),
+            Result = new BalanceResponse(account.Result.Balance),
             HttpStatusCode = 200
         };
     }
 
     public ApiResponse<BalanceResponse> MakeTransfer(TransactionRequest request)
     {
-        var sender = _context.Accounts.FirstOrDefault(account => 
-            account.AccountNumber == request.SenderAccId);
-        var receiver = _context.Accounts.FirstOrDefault(account => 
-            account.AccountNumber == request.ReceiverAccId);
+        var sender = _accountRepository.GetAccountById(
+            new AccountRequest
+            {
+                AccountId = request.SenderAccId
+            });
         
+        var receiver = _accountRepository.GetAccountById(
+            new AccountRequest
+            {
+                AccountId = request.ReceiverAccId ?? Guid.Empty
+            });
+
         if (sender is null || receiver is null)
         {
             return new ApiResponse<BalanceResponse>
@@ -128,7 +132,7 @@ public class AccountsServices : IAccountsService
             };
         }
         
-        if (sender.Balance < request.Amount)
+        if (sender.Result.Balance < request.Amount)
         {
             return new ApiResponse<BalanceResponse>
             {
@@ -137,13 +141,15 @@ public class AccountsServices : IAccountsService
             };
         }
         
-        sender.Balance -= request.Amount;
-        receiver.Balance += request.Amount;
-        _context.SaveChanges();
-        
+        var newSenderBalance = sender.Result.Balance - request.Amount;
+        var newReceiverBalance = sender.Result.Balance + request.Amount;
+
+        _accountRepository.UpdateAccount(new AccountResponse(request.SenderAccId, sender.Result.Name, newSenderBalance));
+        _accountRepository.UpdateAccount(new AccountResponse(request.ReceiverAccId ?? Guid.Empty, receiver.Result.Name, newReceiverBalance));
+
         return new ApiResponse<BalanceResponse>
         {
-            Result = new BalanceResponse(sender.Balance),
+            Result = new BalanceResponse(sender.Result.Balance),
             HttpStatusCode = 200
         };
     }
