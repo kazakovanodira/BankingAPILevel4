@@ -6,7 +6,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "Name" : "stan"
+  "Name" : "nodira"
 }
 
 ###
@@ -15,12 +15,12 @@ Accept: application/json
 Content-Type: application/json
 
 ###
-POST {{rootURL}}/api/Account/54b85fd7-0659-443e-ac82-4aa09bcf3593/deposits
+POST {{rootURL}}/api/Account/899d68c6-2dee-41e9-a757-23fd2cc32bd5/deposits
 Accept: application/json
 Content-Type: application/json
 
 {
-  "Amount": "0"
+  "Amount": "100"
 }
 
 
@@ -61,3 +61,13 @@ Content-Type: application/json
 {
   "Amount": "100"
 }
+
+###
+GET {{rootURL}}/api/Account/899d68c6-2dee-41e9-a757-23fd2cc32bd5/balances
+Accept: application/json
+Content-Type: application/json
+
+{
+  "Currency": "EUR"
+}
+

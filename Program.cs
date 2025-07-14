@@ -1,14 +1,19 @@
 using banking_api_repo.Data;
 using banking_api_repo.Interface;
+using banking_api_repo.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using RESTAPIBankingApplication.Services;
+using banking_api_repo.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<IAccountsService, AccountsServices>();
+builder.Services.AddScoped<ICurrencyServices, CurrencyService>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AccountsContext>(options => 
@@ -19,7 +24,6 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Bank Application API", Version = "v1" });
 });
-builder.Services.AddScoped<IAccountsService, AccountsServices>();
 
 var app = builder.Build();
 

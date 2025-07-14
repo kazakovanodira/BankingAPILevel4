@@ -6,15 +6,8 @@ using banking_api_repo.Models.Responses;
 
 namespace banking_api_repo.Repositories;
 
-public class AccountRepository : IAccountRepository
+public class AccountRepository(AccountsContext _context) : IAccountRepository
 {
-    private readonly AccountsContext _context;
-    
-    public AccountRepository(AccountsContext context)
-    {
-        _context = context;
-    }
-    
     public Task<AccountResponse> AddAccount(AccountResponse accountResponse)
     {
         var account = new Account
@@ -45,7 +38,6 @@ public class AccountRepository : IAccountRepository
         account.Balance = accountResponse.Balance;
         account.Name = accountResponse.Name;
         
-        _context.Accounts.Add(account);
         _context.SaveChanges();
 
         return Task.FromResult(new AccountResponse(account.AccountNumber, account.Name, account.Balance));

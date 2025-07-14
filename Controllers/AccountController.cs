@@ -17,7 +17,7 @@ public class AccountController(IAccountsService service) : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ApiResponse<AccountResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse<AccountResponse>), StatusCodes.Status400BadRequest)]
-    public IActionResult  CreateNewAccount([FromBody] CreateAccountRequest request)
+    public IActionResult CreateNewAccount([FromBody] CreateAccountRequest request)
     {
         var account = service.CreateAccount(request);
         

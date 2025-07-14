@@ -4,17 +4,8 @@ using banking_api_repo.Models.Responses;
 
 namespace banking_api_repo.Services;
 
-public class AccountsServices : IAccountsService
+public class AccountsServices(IAccountRepository _accountRepository, ICurrencyServices _currencyServices) : IAccountsService
 {
-    private readonly IAccountRepository _accountRepository;
-    private readonly ICurrencyServices _currencyServices;
-
-    AccountsServices(IAccountRepository accountRepository, ICurrencyServices currencyServices)
-    {
-        _accountRepository = accountRepository;
-        _currencyServices = currencyServices;
-    }
-
     public ApiResponse<AccountResponse> CreateAccount(CreateAccountRequest request)
     {
         var newAccount = new AccountResponse(Guid.NewGuid(), request.Name, 0);
