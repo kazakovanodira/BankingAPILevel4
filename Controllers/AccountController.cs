@@ -101,7 +101,7 @@ public class AccountController(IAccountsService service) : ControllerBase
     /// </summary>
     /// <param name="request">The transfer request containing sender, receiver, and transfer amount.</param>
     /// <returns>The updated sender balance or an error response.</returns>
-    [HttpPost("transfer")]
+    [HttpPost("transfers")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
@@ -119,6 +119,15 @@ public class AccountController(IAccountsService service) : ControllerBase
             return StatusCode(account.HttpStatusCode, account);
         }
         return Ok(account);
+    }
+
+    [HttpGet("{accountNumber}/balances")]
+    [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
+    public IActionResult CheckConvertedBalance(Guid accountNumber, [FromBody] CurrencyRequest currencyRequest)
+    {
+        
     }
 
    
