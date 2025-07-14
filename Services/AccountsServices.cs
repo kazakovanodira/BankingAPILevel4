@@ -147,4 +147,9 @@ public class AccountsServices : IAccountsService
             HttpStatusCode = 200
         };
     }
+
+    public ApiResponse<ConvertedBalances> CheckBalance(AccountRequest accountRequest, CurrencyRequest currencyRequest)
+    {
+        
+    }
 }
