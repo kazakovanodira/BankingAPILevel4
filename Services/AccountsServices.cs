@@ -156,6 +156,17 @@ public class AccountsServices : IAccountsService
 
     public ApiResponse<ConvertedBalances> GetConvertedBalance(AccountRequest accountRequest, CurrencyRequest currencyRequest)
     {
+        var account = _accountRepository.GetAccountById(accountRequest);
+        
+        if (account is null)
+        {
+            return new ApiResponse<ConvertedBalances>
+            {
+                ErrorMessage = "Account not found.",
+                HttpStatusCode = 404
+            };
+        }
+        
         string[] requestedCurrencies = currencyRequest.Currency.Split(',');
         var fetchedCurrencies = _currencyServices.ConvertToCurrency().Result;
         var convertedBalancesDict = new ConvertedBalances();
@@ -164,7 +175,7 @@ public class AccountsServices : IAccountsService
         {
             if (fetchedCurrencies.ContainsKey(currency))
             {
-                convertedBalancesDict.convertedBalances.Add(currency, fetchedCurrencies[currency]);
+                convertedBalancesDict.convertedBalances.Add(currency, fetchedCurrencies[currency] * account.Result.Balance);
             }
         }
         

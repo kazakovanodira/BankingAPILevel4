@@ -120,15 +120,26 @@ public class AccountController(IAccountsService service) : ControllerBase
         }
         return Ok(account);
     }
-
+    
+    /// <summary>
+    /// Converts balance of the specified account to the requested currencies.
+    /// </summary>
+    /// <param name="accountNumber">The account number to check balance from</param>
+    /// <param name="currencyRequest">The currencies to convert the balance to.</param>
+    /// <returns>The list of the converted balance or an error response</returns>
     [HttpGet("{accountNumber}/balances")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
     public IActionResult CheckConvertedBalance(Guid accountNumber, [FromBody] CurrencyRequest currencyRequest)
     {
-        
-    }
+        var response = service.GetConvertedBalance(new AccountRequest { AccountId = accountNumber }, 
+            new CurrencyRequest {  Currency = currencyRequest.Currency });
 
-   
+        if (!response.IsSuccess)
+        {
+            return StatusCode(response.HttpStatusCode, response);
+        }
+        return Ok(response);
+    }
 }
