@@ -10,5 +10,5 @@ public interface IAccountsService
     ApiResponse<BalanceResponse> MakeDeposit(TransactionRequest request);
     ApiResponse<BalanceResponse> MakeWithdraw(TransactionRequest request);
     ApiResponse<BalanceResponse> MakeTransfer(TransactionRequest request);
-    ApiResponse<ConvertedBalances> CheckBalance(AccountRequest accountRequest, CurrencyRequest currencyRequest);
+    ApiResponse<ConvertedBalances> GetConvertedBalance(AccountRequest accountRequest, CurrencyRequest currencyRequest);
 }

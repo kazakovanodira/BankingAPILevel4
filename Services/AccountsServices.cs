@@ -154,8 +154,24 @@ public class AccountsServices : IAccountsService
         };
     }
 
-    public ApiResponse<ConvertedBalances> CheckBalance(AccountRequest accountRequest, CurrencyRequest currencyRequest)
+    public ApiResponse<ConvertedBalances> GetConvertedBalance(AccountRequest accountRequest, CurrencyRequest currencyRequest)
     {
+        string[] requestedCurrencies = currencyRequest.Currency.Split(',');
+        var fetchedCurrencies = _currencyServices.ConvertToCurrency().Result;
+        var convertedBalancesDict = new ConvertedBalances();
+
+        foreach (var currency in requestedCurrencies)
+        {
+            if (fetchedCurrencies.ContainsKey(currency))
+            {
+                convertedBalancesDict.convertedBalances.Add(currency, fetchedCurrencies[currency]);
+            }
+        }
         
+        return new ApiResponse<ConvertedBalances>
+        {
+            Result = convertedBalancesDict,
+            HttpStatusCode = 200
+        };
     }
 }
