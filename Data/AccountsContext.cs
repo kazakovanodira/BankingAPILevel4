@@ -1,7 +1,7 @@
+using banking_api_repo.Models;
 using Microsoft.EntityFrameworkCore;
-using RESTAPIBankingApplication.Models;
 
-namespace RESTAPIBankingApplication.Data;
+namespace banking_api_repo.Data;
 
 public class AccountsContext : DbContext
 {

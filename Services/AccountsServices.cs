@@ -1,8 +1,8 @@
-using RESTAPIBankingApplication.Data;
-using RESTAPIBankingApplication.Interface;
-using RESTAPIBankingApplication.Models;
-using RESTAPIBankingApplication.Models.Requests;
-using RESTAPIBankingApplication.Models.Responses;
+using banking_api_repo.Data;
+using banking_api_repo.Interface;
+using banking_api_repo.Models;
+using banking_api_repo.Models.Requests;
+using banking_api_repo.Models.Responses;
 
 namespace RESTAPIBankingApplication.Services;
 

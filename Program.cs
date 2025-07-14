@@ -1,7 +1,7 @@
+using banking_api_repo.Data;
+using banking_api_repo.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using RESTAPIBankingApplication.Data;
-using RESTAPIBankingApplication.Interface;
 using RESTAPIBankingApplication.Services;
 
 var builder = WebApplication.CreateBuilder(args);

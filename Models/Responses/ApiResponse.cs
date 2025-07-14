@@ -1,4 +1,4 @@
-namespace RESTAPIBankingApplication.Models.Responses;
+namespace banking_api_repo.Models.Responses;
 
 public class ApiResponse<T>
 {

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace RESTAPIBankingApplication.Models;
+namespace banking_api_repo.Models;
 
 public class Account
 {

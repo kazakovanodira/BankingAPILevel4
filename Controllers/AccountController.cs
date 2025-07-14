@@ -1,9 +1,9 @@
+using banking_api_repo.Interface;
+using banking_api_repo.Models.Requests;
+using banking_api_repo.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
-using RESTAPIBankingApplication.Interface;
-using RESTAPIBankingApplication.Models.Requests;
-using RESTAPIBankingApplication.Models.Responses;
 
-namespace RESTAPIBankingApplication.Controllers;
+namespace banking_api_repo.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -120,4 +120,6 @@ public class AccountController(IAccountsService service) : ControllerBase
         }
         return Ok(account);
     }
+
+   
 }

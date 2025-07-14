@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace RESTAPIBankingApplication.Models.Requests;
+namespace banking_api_repo.Models.Requests;
 
 public class CreateAccountRequest
 {

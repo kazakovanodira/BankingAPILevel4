@@ -1,7 +1,7 @@
-using RESTAPIBankingApplication.Models.Requests;
-using RESTAPIBankingApplication.Models.Responses;
+using banking_api_repo.Models.Requests;
+using banking_api_repo.Models.Responses;
 
-namespace RESTAPIBankingApplication.Interface;
+namespace banking_api_repo.Interface;
 
 public interface IAccountsService
 {
