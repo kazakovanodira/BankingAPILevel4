@@ -21,7 +21,7 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
     {
         var account = _accountRepository.GetAccountById(request);
         
-        if (account is null)
+        if (account.Result is null)
         {
             return new ApiResponse<AccountResponse>
             {
@@ -45,7 +45,7 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
                 AccountId = request.SenderAccId
             });
 
-        if (account is null)
+        if (account.Result is null)
         {
             return new ApiResponse<BalanceResponse>
             {
@@ -59,7 +59,7 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
 
         return new ApiResponse<BalanceResponse>
         {
-            Result = new BalanceResponse(account.Result.Balance),
+            Result = new BalanceResponse(newBalance),
             HttpStatusCode = 200
         };
     }
@@ -72,7 +72,7 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
                 AccountId = request.SenderAccId
             });
 
-        if (account is null)
+        if (account.Result is null)
         {
             return new ApiResponse<BalanceResponse>
             {
@@ -114,7 +114,7 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
                 AccountId = request.ReceiverAccId ?? Guid.Empty
             });
 
-        if (sender is null || receiver is null)
+        if (sender.Result is null || receiver.Result is null)
         {
             return new ApiResponse<BalanceResponse>
             {
@@ -133,14 +133,14 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
         }
         
         var newSenderBalance = sender.Result.Balance - request.Amount;
-        var newReceiverBalance = sender.Result.Balance + request.Amount;
+        var newReceiverBalance = receiver.Result.Balance + request.Amount;
 
         _accountRepository.UpdateAccount(new AccountResponse(request.SenderAccId, sender.Result.Name, newSenderBalance));
         _accountRepository.UpdateAccount(new AccountResponse(request.ReceiverAccId ?? Guid.Empty, receiver.Result.Name, newReceiverBalance));
 
         return new ApiResponse<BalanceResponse>
         {
-            Result = new BalanceResponse(sender.Result.Balance),
+            Result = new BalanceResponse(newSenderBalance),
             HttpStatusCode = 200
         };
     }
@@ -148,7 +148,7 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
     public async Task<ApiResponse<ConvertedBalances>> GetConvertedBalanceAsync(AccountRequest accountRequest, CurrencyRequest currencyRequest)
     {
         var account = _accountRepository.GetAccountById(accountRequest);
-        if (account is null)
+        if (account.Result is null)
         {
             return new ApiResponse<ConvertedBalances>
             {
@@ -160,7 +160,6 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
         string[] requestedCurrencies = currencyRequest.Currency?.Split(
                                            ',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                                             ?? Array.Empty<string>();
-        Console.WriteLine("Requested currencies: " + string.Join(", ", requestedCurrencies));
 
         var fetchedCurrencies = await _currencyServices.ConvertToCurrency();
 
@@ -171,8 +170,10 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
             if (fetchedCurrencies.ContainsKey(currency))
             {
                 convertedBalances.convertedBalancesDict.Add(currency, Math.Round(fetchedCurrencies[currency] * account.Result.Balance, 2));
-                Console.WriteLine("Currency found: " + currency + ". Rate is: " + fetchedCurrencies[currency]);
-                Console.WriteLine("Currency: " + currency + ". Converted rate is: " + convertedBalances.convertedBalancesDict[currency]);
+            }
+            else
+            {
+                convertedBalances.convertedBalancesDict.Add(currency + "not found", 0);
             }
         }
 

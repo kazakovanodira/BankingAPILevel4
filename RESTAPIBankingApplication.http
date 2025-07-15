@@ -6,55 +6,25 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "Name" : "nodira"
-}
-
-###
-GET {{rootURL}}/api/Account/899d68c6-2dee-41e9-a757-23fd2cc32bd5
-Accept: application/json
-Content-Type: application/json
-
-###
-POST {{rootURL}}/api/Account/899d68c6-2dee-41e9-a757-23fd2cc32bd5/deposits
-Accept: application/json
-Content-Type: application/json
-
-{
-  "Amount": "100"
-}
-
-
-###
-POST {{rootURL}}/api/Account/899d68c6-2dee-41e9-a757-23fd2cc32bd5/withdrawals
-Accept: application/json
-Content-Type: application/json
-
-{
-  "Amount": "300"
-}
-
-###
-POST {{rootURL}}/api/Account
-Accept: application/json
-Content-Type: application/json
-
-{
   "Name" : "jane"
 }
 
 ###
-POST {{rootURL}}/api/Account/transfer
+GET {{rootURL}}/api/Account/b6a7199a-a150-4dfe-8886-925c186a1d90
+Accept: application/json
+Content-Type: application/json
+
+###
+POST {{rootURL}}/api/Account/b6a7199a-a150-4dfe-8886-925c186a1d90/deposits
 Accept: application/json
 Content-Type: application/json
 
 {
-  "SenderAccId": "54b85fd7-0659-443e-ac82-4aa09bcf3593",
-  "ReceiverAccId": "71538b8e-14d7-481c-aa8d-34f4f78a33a6",
-  "Amount": "200"
+  "Amount": "0"
 }
 
 ###
-POST {{rootURL}}/api/Account/7aceee3e-2314-4598-b268-eeecf50b41a0/deposits
+POST {{rootURL}}/api/Account/b6a7199a-a150-4dfe-8886-925c186a1d90/withdrawals
 Accept: application/json
 Content-Type: application/json
 
@@ -63,7 +33,18 @@ Content-Type: application/json
 }
 
 ###
-GET {{rootURL}}/api/Account/899d68c6-2dee-41e9-a757-23fd2cc32bd5/balances?currency=CAD
+POST {{rootURL}}/api/Account/transfers
+Accept: application/json
+Content-Type: application/json
+
+{
+  "SenderAccId": "b6a7199a-a150-4dfe-8886-925c186a1d90",
+  "ReceiverAccId": "899d68c6-2dee-41e9-a757-23fd2cc32bd5",
+  "Amount": "100"
+}
+
+###
+GET {{rootURL}}/api/Account/899d68c6-2dee-41e9-a757-23fd2cc32bd5/balances?currency=USD
 Accept: application/json
 Content-Type: application/json
 

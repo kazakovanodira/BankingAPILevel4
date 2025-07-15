@@ -14,16 +14,11 @@ public class CurrencyService : ICurrencyServices
             var jsonString = await client.GetStringAsync(endpoint);
             jsonString = jsonString.Remove(0, 8);
             jsonString = jsonString.Remove(jsonString.Length - 1, 1);
-            //Console.WriteLine(jsonString);
 
-            Dictionary<string, decimal> dict = JsonSerializer.Deserialize<Dictionary<string, decimal>>(jsonString);
+            Dictionary<string, decimal> fetchedCurrencies = JsonSerializer.Deserialize<Dictionary<string, decimal>>(jsonString) ?? 
+                                               new Dictionary<string, decimal>();
             
-            foreach (var currency in dict)
-            {
-                Console.WriteLine(currency.Key + ": " + currency.Value);
-            }
-
-            return dict; // new Dictionary<string, decimal>();
+            return fetchedCurrencies;
         }
     }
 }
