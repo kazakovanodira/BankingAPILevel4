@@ -25,12 +25,12 @@ Content-Type: application/json
 
 
 ###
-POST {{rootURL}}/api/Account/71538b8e-14d7-481c-aa8d-34f4f78a33a6/withdrawals
+POST {{rootURL}}/api/Account/899d68c6-2dee-41e9-a757-23fd2cc32bd5/withdrawals
 Accept: application/json
 Content-Type: application/json
 
 {
-  "Amount": "100"
+  "Amount": "300"
 }
 
 ###
@@ -63,7 +63,7 @@ Content-Type: application/json
 }
 
 ###
-GET {{rootURL}}/api/Account/899d68c6-2dee-41e9-a757-23fd2cc32bd5/balances?currency=EUR,CAD
+GET {{rootURL}}/api/Account/899d68c6-2dee-41e9-a757-23fd2cc32bd5/balances?currency=CAD
 Accept: application/json
 Content-Type: application/json
 

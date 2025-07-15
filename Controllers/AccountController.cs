@@ -141,6 +141,6 @@ public class AccountController(IAccountsService service) : ControllerBase
             return StatusCode(response.HttpStatusCode, response);
         }
 
-        return Ok(response);
+        return Ok(response.Result.convertedBalancesDict);
     }
 }

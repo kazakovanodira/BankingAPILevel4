@@ -170,7 +170,9 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
         {
             if (fetchedCurrencies.ContainsKey(currency))
             {
-                convertedBalances.convertedBalances[currency] = fetchedCurrencies[currency] * account.Result.Balance;
+                convertedBalances.convertedBalancesDict.Add(currency, Math.Round(fetchedCurrencies[currency] * account.Result.Balance, 2));
+                Console.WriteLine("Currency found: " + currency + ". Rate is: " + fetchedCurrencies[currency]);
+                Console.WriteLine("Currency: " + currency + ". Converted rate is: " + convertedBalances.convertedBalancesDict[currency]);
             }
         }
 
