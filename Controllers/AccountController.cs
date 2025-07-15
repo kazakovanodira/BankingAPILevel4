@@ -7,19 +7,26 @@ namespace banking_api_repo.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AccountController(IAccountsService service) : ControllerBase
+public class AccountController : ControllerBase
 {
+    private readonly IAccountsService _service;
+
+    public AccountController(IAccountsService service)
+    {
+        _service = service;
+    }
+    
     /// <summary>
     /// Creates a new bank account with the specified account holder name.
     /// </summary>
     /// <param name="request">Contains the account holder's name.</param>
-    /// <returns>The created account details or an error response.</returns>
+    /// <returns>The created account details.</returns>
     [HttpPost]
-    [ProducesResponseType(typeof(ApiResponse<AccountResponse>), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ApiResponse<AccountResponse>), StatusCodes.Status400BadRequest)]
-    public IActionResult CreateNewAccount([FromBody] CreateAccountRequest request)
+    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateNewAccount([FromBody] CreateAccountRequest request)
     {
-        var account = service.CreateAccount(request);
+        var account = await _service.CreateAccount(request);
         
         if (!account.IsSuccess)
         {
@@ -33,13 +40,13 @@ public class AccountController(IAccountsService service) : ControllerBase
     /// Retrieves account details by account number.
     /// </summary>
     /// <param name="accountNumber">The unique identifier of the account.</param>
-    /// <returns>The account details or an error response if not found.</returns>
+    /// <returns>The account details.</returns>
     [HttpGet("{accountNumber}")]
-    [ProducesResponseType(typeof(ApiResponse<AccountResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<AccountResponse>), StatusCodes.Status404NotFound)]
-    public IActionResult GetAccount(Guid accountNumber)
+    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetAccount(Guid accountNumber)
     {
-        var account = service.GetAccount(new AccountRequest { AccountId = accountNumber });
+        var account = await _service.GetAccount(new AccountRequest(accountNumber));
         if (!account.IsSuccess)
         {
             return StatusCode(account.HttpStatusCode, account);
@@ -52,13 +59,13 @@ public class AccountController(IAccountsService service) : ControllerBase
     /// </summary>
     /// <param name="accountNumber">The account number to deposit into.</param>
     /// <param name="request">The deposit request containing the deposit amount.</param>
-    /// <returns>The updated balance or an error response.</returns>
+    /// <returns>The updated balance.</returns>
     [HttpPost("{accountNumber}/deposits")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    public IActionResult MakeDeposit(Guid accountNumber,[FromBody] TransactionRequest request)
+    public async Task<IActionResult> MakeDeposit(Guid accountNumber,[FromBody] TransactionRequest request)
     {
-        var account = service.MakeDeposit(new TransactionRequest()
+        var account = await _service.MakeDeposit(new TransactionRequest()
         {
             SenderAccId = accountNumber,
             Amount = request.Amount,
@@ -76,14 +83,14 @@ public class AccountController(IAccountsService service) : ControllerBase
     /// </summary>
     /// <param name="accountNumber">The account number to withdraw from.</param>
     /// <param name="request">The withdrawal request containing the withdrawal amount.</param>
-    /// <returns>The updated balance or an error response.</returns>
+    /// <returns>The updated balance.</returns>
     [HttpPost("{accountNumber}/withdrawals")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    public IActionResult MakeWithdrawal(Guid accountNumber,[FromBody] TransactionRequest request)
+    public async Task<IActionResult> MakeWithdrawal(Guid accountNumber,[FromBody] TransactionRequest request)
     {
-        var account = service.MakeWithdraw(new TransactionRequest()
+        var account = await _service.MakeWithdraw(new TransactionRequest()
         {
             SenderAccId = accountNumber,
             Amount = request.Amount,
@@ -100,14 +107,14 @@ public class AccountController(IAccountsService service) : ControllerBase
     /// Transfers funds between two accounts.
     /// </summary>
     /// <param name="request">The transfer request containing sender, receiver, and transfer amount.</param>
-    /// <returns>The updated sender balance or an error response.</returns>
+    /// <returns>The updated sender balance.</returns>
     [HttpPost("transfers")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    public IActionResult MakeTransfer([FromBody] TransactionRequest request)
+    public async Task<IActionResult> MakeTransfer([FromBody] TransactionRequest request)
     {
-        var account = service.MakeTransfer(new TransactionRequest()
+        var account = await _service.MakeTransfer(new TransactionRequest()
         {
             SenderAccId = request.SenderAccId,
             ReceiverAccId = request.ReceiverAccId,
@@ -126,25 +133,21 @@ public class AccountController(IAccountsService service) : ControllerBase
     /// </summary>
     /// <param name="accountNumber">The account number to check balance from</param>
     /// <param name="currencyRequest">The currencies to convert the balance to.</param>
-    /// <returns>The list of the converted balance or an error response</returns>
+    /// <returns>The list of the converted balance.</returns>
     [HttpGet("{accountNumber}/balances")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CheckConvertedBalance(Guid accountNumber, [FromQuery] string currency)
     {
-        var response = await service.GetConvertedBalanceAsync(
-            new AccountRequest { AccountId = accountNumber },
+        var response = await _service.GetConvertedBalanceAsync(
+            new AccountRequest(accountNumber),
             new CurrencyRequest { Currency = currency });
 
         if (!response.IsSuccess)
         {
             return StatusCode(response.HttpStatusCode, response);
         }
-
-        return Ok(new ApiResponse<Dictionary<string, decimal>>
-        {
-            Result = response.Result.convertedBalancesDict,
-            HttpStatusCode = 200
-        });
+        
+        return Ok(response.Result);
     }
 }
