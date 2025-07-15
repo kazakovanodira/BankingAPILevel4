@@ -44,7 +44,7 @@ Content-Type: application/json
 }
 
 ###
-GET {{rootURL}}/api/Account/899d68c6-2dee-41e9-a757-23fd2cc32bd5/balances?currency=USD
+GET {{rootURL}}/api/Account/b6a7199a-a150-4dfe-8886-925c186a1d90/balances?currency=UZS
 Accept: application/json
 Content-Type: application/json
 

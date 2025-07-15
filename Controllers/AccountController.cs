@@ -37,7 +37,7 @@ public class AccountController(IAccountsService service) : ControllerBase
     [HttpGet("{accountNumber}")]
     [ProducesResponseType(typeof(ApiResponse<AccountResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<AccountResponse>), StatusCodes.Status404NotFound)]
-    public IActionResult  GetAccount(Guid accountNumber)
+    public IActionResult GetAccount(Guid accountNumber)
     {
         var account = service.GetAccount(new AccountRequest { AccountId = accountNumber });
         if (!account.IsSuccess)
@@ -56,7 +56,7 @@ public class AccountController(IAccountsService service) : ControllerBase
     [HttpPost("{accountNumber}/deposits")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    public IActionResult  MakeDeposit(Guid accountNumber,[FromBody] TransactionRequest request)
+    public IActionResult MakeDeposit(Guid accountNumber,[FromBody] TransactionRequest request)
     {
         var account = service.MakeDeposit(new TransactionRequest()
         {
@@ -81,7 +81,7 @@ public class AccountController(IAccountsService service) : ControllerBase
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    public IActionResult  MakeWithdrawal(Guid accountNumber,[FromBody] TransactionRequest request)
+    public IActionResult MakeWithdrawal(Guid accountNumber,[FromBody] TransactionRequest request)
     {
         var account = service.MakeWithdraw(new TransactionRequest()
         {
@@ -105,7 +105,7 @@ public class AccountController(IAccountsService service) : ControllerBase
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    public IActionResult  MakeTransfer([FromBody] TransactionRequest request)
+    public IActionResult MakeTransfer([FromBody] TransactionRequest request)
     {
         var account = service.MakeTransfer(new TransactionRequest()
         {
@@ -141,6 +141,10 @@ public class AccountController(IAccountsService service) : ControllerBase
             return StatusCode(response.HttpStatusCode, response);
         }
 
-        return Ok(response.Result.convertedBalancesDict);
+        return Ok(new ApiResponse<Dictionary<string, decimal>>
+        {
+            Result = response.Result.convertedBalancesDict,
+            HttpStatusCode = 200
+        });
     }
 }
