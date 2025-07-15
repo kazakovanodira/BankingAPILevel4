@@ -3,59 +3,63 @@ using banking_api_repo.Interface;
 using banking_api_repo.Models;
 using banking_api_repo.Models.Requests;
 using banking_api_repo.Models.Responses;
+using Microsoft.EntityFrameworkCore;
 
 namespace banking_api_repo.Repositories;
 
-public class AccountRepository(AccountsContext _context) : IAccountRepository
+public class AccountRepository : IAccountRepository
 {
-    public Task<AccountResponse> AddAccount(AccountResponse accountResponse)
+    private readonly AccountsContext _context;
+
+    public AccountRepository(AccountsContext context)
+    {
+        _context = context;
+    }
+    
+    public async Task<AccountDto> AddAccount(AccountDto accountDto)
     {
         var account = new Account
         {
-            AccountNumber = accountResponse.AccountId,
-            Balance = accountResponse.Balance,
-            Name = accountResponse.Name
-
+            AccountNumber = accountDto.AccountId,
+            Balance = accountDto.Balance,
+            Name = accountDto.Name
         };
         
         _context.Accounts.Add(account);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
-        var newAccount = new AccountResponse(account.AccountNumber, account.Name, account.Balance);
-        return Task.FromResult<AccountResponse>(newAccount);
+        return accountDto;
     }
 
-    public Task<AccountResponse?> UpdateAccount(AccountResponse accountResponse)
+    public async Task<AccountDto?> UpdateAccount(Guid accountId, decimal balance)
     {
         var account = _context.Accounts.FirstOrDefault(account => 
-            account.AccountNumber == accountResponse.AccountId);
+            account.AccountNumber == accountId);
         
         if (account is null)
         {
-            return Task.FromResult<AccountResponse?>(null);
+            return null;
         }
         
-        account.AccountNumber = accountResponse.AccountId;
-        account.Balance = accountResponse.Balance;
-        account.Name = accountResponse.Name;
+        account.Balance = balance;
         
-        _context.SaveChanges();
-        
-        var newAccount = new AccountResponse(account.AccountNumber, account.Name, account.Balance);
-        return Task.FromResult<AccountResponse?>(newAccount);
+        await _context.SaveChangesAsync();
+        //mapper
+        return accountDto;
     }
 
-    public Task<AccountResponse?> GetAccountById(AccountRequest accountRequest)
+    public async Task<AccountDto?> GetAccountById(Guid accountId)
     {
-        var account = _context.Accounts.FirstOrDefault(account => 
-            account.AccountNumber == accountRequest.AccountId);
+        var account = await _context.Accounts.FirstOrDefaultAsync(account => 
+            account.AccountNumber == accountId);
         
         if (account is null)
         {
-            return Task.FromResult<AccountResponse?>(null);
+            return null;
         }
-
-        var accountResponse = new AccountResponse(account.AccountNumber, account.Name, account.Balance);
-        return Task.FromResult<AccountResponse?>(accountResponse);
+        
+        //mapper
+        var accountResponse = new AccountDto(account.AccountNumber, account.Name, account.Balance);
+        return accountResponse;
     }
 }

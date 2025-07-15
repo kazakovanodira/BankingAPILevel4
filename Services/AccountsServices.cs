@@ -4,48 +4,52 @@ using banking_api_repo.Models.Responses;
 
 namespace banking_api_repo.Services;
 
-public class AccountsServices(IAccountRepository _accountRepository, ICurrencyServices _currencyServices) : IAccountsService
+public class AccountsServices : IAccountsService
 {
-    public ApiResponse<AccountResponse> CreateAccount(CreateAccountRequest request)
+    private readonly IAccountRepository _accountRepository;
+    private readonly ICurrencyServices _currencyServices;
+
+    public AccountsServices(IAccountRepository accountRepository, ICurrencyServices currencyServices)
     {
-        var newAccount = new AccountResponse(Guid.NewGuid(), request.Name, 0);
+        _accountRepository = accountRepository;
+        _currencyServices = currencyServices;
+    }
+    public async Task<ApiResponse<AccountDto>> CreateAccount(CreateAccountRequest request)
+    {
+        var newAccount = new AccountDto(Guid.NewGuid(), request.Name, 0);
         
-        return new ApiResponse<AccountResponse>
+        return new ApiResponse<AccountDto>
         {
-            Result = _accountRepository.AddAccount(newAccount).Result,
+            Result = await _accountRepository.AddAccount(newAccount),
             HttpStatusCode = 201
         };
     }
 
-    public ApiResponse<AccountResponse> GetAccount(AccountRequest request)
+    public async Task<ApiResponse<AccountDto>> GetAccount(AccountRequest request)
     {
-        var account = _accountRepository.GetAccountById(request);
+        var account = await _accountRepository.GetAccountById(request.AccountId);
         
-        if (account.Result is null)
+        if (account is null)
         {
-            return new ApiResponse<AccountResponse>
+            return new ApiResponse<AccountDto>
             {
                 ErrorMessage = "Account not found.",
                 HttpStatusCode = 404
             };
         }
         
-        return new ApiResponse<AccountResponse>
+        return new ApiResponse<AccountDto>
         {
-            Result = account.Result,
+            Result = account,
             HttpStatusCode = 200
         };
     }
 
-    public ApiResponse<BalanceResponse> MakeDeposit(TransactionRequest request)
+    public async Task<ApiResponse<BalanceResponse>> MakeDeposit(TransactionRequest request)
     {
-        var account = _accountRepository.GetAccountById(
-            new AccountRequest
-            {
-                AccountId = request.SenderAccId
-            });
+        var account = await _accountRepository.GetAccountById(request.SenderAccId);
 
-        if (account.Result is null)
+        if (account is null)
         {
             return new ApiResponse<BalanceResponse>
             {
@@ -54,8 +58,8 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
             };
         }
         
-        var newBalance = account.Result.Balance + request.Amount;
-        _accountRepository.UpdateAccount(new AccountResponse(request.SenderAccId, account.Result.Name, newBalance));
+        var newBalance = account.Balance + request.Amount;
+        await _accountRepository.UpdateAccount(request.SenderAccId, newBalance);
 
         return new ApiResponse<BalanceResponse>
         {
@@ -64,15 +68,11 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
         };
     }
 
-    public ApiResponse<BalanceResponse> MakeWithdraw(TransactionRequest request)
+    public async Task<ApiResponse<BalanceResponse>> MakeWithdraw(TransactionRequest request)
     {
-        var account = _accountRepository.GetAccountById(
-            new AccountRequest
-            {
-                AccountId = request.SenderAccId
-            });
+        var account = await _accountRepository.GetAccountById(request.SenderAccId);
 
-        if (account.Result is null)
+        if (account is null)
         {
             return new ApiResponse<BalanceResponse>
             {
@@ -81,7 +81,7 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
             };
         }
         
-        if (account.Result.Balance < request.Amount)
+        if (account.Balance < request.Amount)
         {
             return new ApiResponse<BalanceResponse>
             {
@@ -90,31 +90,23 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
             };
         }
         
-        var newBalance = account.Result.Balance - request.Amount;
-        _accountRepository.UpdateAccount(new AccountResponse(request.SenderAccId, account.Result.Name, newBalance));
+        var newBalance = account.Balance - request.Amount;
+        await _accountRepository.UpdateAccount(request.SenderAccId, newBalance);
 
         return new ApiResponse<BalanceResponse>
         {
-            Result = new BalanceResponse(account.Result.Balance),
+            Result = new BalanceResponse(account.Balance),
             HttpStatusCode = 200
         };
     }
 
-    public ApiResponse<BalanceResponse> MakeTransfer(TransactionRequest request)
+    public async Task<ApiResponse<BalanceResponse>> MakeTransfer(TransactionRequest request)
     {
-        var sender = _accountRepository.GetAccountById(
-            new AccountRequest
-            {
-                AccountId = request.SenderAccId
-            });
+        var sender = await _accountRepository.GetAccountById(request.SenderAccId);
         
-        var receiver = _accountRepository.GetAccountById(
-            new AccountRequest
-            {
-                AccountId = request.ReceiverAccId ?? Guid.Empty
-            });
+        var receiver = await _accountRepository.GetAccountById(request.ReceiverAccId);
 
-        if (sender.Result is null || receiver.Result is null)
+        if (sender is null || receiver is null)
         {
             return new ApiResponse<BalanceResponse>
             {
@@ -123,7 +115,7 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
             };
         }
         
-        if (sender.Result.Balance < request.Amount)
+        if (sender.Balance < request.Amount)
         {
             return new ApiResponse<BalanceResponse>
             {
@@ -132,11 +124,11 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
             };
         }
         
-        var newSenderBalance = sender.Result.Balance - request.Amount;
-        var newReceiverBalance = receiver.Result.Balance + request.Amount;
+        var newSenderBalance = sender.Balance - request.Amount;
+        var newReceiverBalance = receiver.Balance + request.Amount;
 
-        _accountRepository.UpdateAccount(new AccountResponse(request.SenderAccId, sender.Result.Name, newSenderBalance));
-        _accountRepository.UpdateAccount(new AccountResponse(request.ReceiverAccId ?? Guid.Empty, receiver.Result.Name, newReceiverBalance));
+        await _accountRepository.UpdateAccount(request.SenderAccId, newSenderBalance);
+        await _accountRepository.UpdateAccount(request.ReceiverAccId, newReceiverBalance);
 
         return new ApiResponse<BalanceResponse>
         {
@@ -147,8 +139,8 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
 
     public async Task<ApiResponse<ConvertedBalances>> GetConvertedBalanceAsync(AccountRequest accountRequest, CurrencyRequest currencyRequest)
     {
-        var account = _accountRepository.GetAccountById(accountRequest);
-        if (account.Result is null)
+        var account = await _accountRepository.GetAccountById(accountRequest.AccountId);
+        if (account is null)
         {
             return new ApiResponse<ConvertedBalances>
             {
@@ -157,9 +149,9 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
             };
         }
 
-        string[] requestedCurrencies = currencyRequest.Currency?.Split(
+        /*string[] requestedCurrencies = currencyRequest.Currency?.Split(
                                            ',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                                            ?? Array.Empty<string>();
+                                            ?? Array.Empty<string>(); //USD,CAD*/
 
         var fetchedCurrencies = await _currencyServices.ConvertToCurrency();
 
@@ -169,11 +161,11 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
         {
             if (fetchedCurrencies.ContainsKey(currency))
             {
-                convertedBalances.convertedBalancesDict.Add(currency, Math.Round(fetchedCurrencies[currency] * account.Result.Balance, 2));
+                convertedBalances.Add(currency, Math.Round(fetchedCurrencies[currency] * account.Balance, 2));
             }
             else
             {
-                convertedBalances.convertedBalancesDict.Add(currency + "not found", 0);
+                convertedBalances.Add(currency + "not found", 0);
             }
         }
 

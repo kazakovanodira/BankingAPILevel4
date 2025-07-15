@@ -6,7 +6,7 @@ public class TransactionRequest
 {
     [Required]
     public Guid SenderAccId { get; set; }
-    public Guid? ReceiverAccId { get; set; }
+    public Guid ReceiverAccId { get; set; } = Guid.Empty;
     [Required]
     [Range(0.01, double.MaxValue, ErrorMessage = "Amount must be greater than zero.")]
     public decimal Amount { get; set; }

@@ -5,7 +5,7 @@ namespace banking_api_repo.Interface;
 
 public interface IAccountRepository
 {
-    public Task<AccountResponse> AddAccount(AccountResponse accountResponse);
-    public Task<AccountResponse?> UpdateAccount(AccountResponse accountResponse);
-    public Task<AccountResponse?> GetAccountById(AccountRequest accountRequest);
+    Task<AccountDto> AddAccount(AccountDto accountDto);
+    Task<AccountDto?> UpdateAccount(Guid accountId, decimal balance);
+    Task<AccountDto?> GetAccountById(Guid accountId);
 }

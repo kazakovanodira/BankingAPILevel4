@@ -5,11 +5,11 @@ namespace banking_api_repo.Interface;
 
 public interface IAccountsService
 {
-    ApiResponse<AccountResponse> CreateAccount(CreateAccountRequest request);
-    ApiResponse<AccountResponse> GetAccount(AccountRequest request);
-    ApiResponse<BalanceResponse> MakeDeposit(TransactionRequest request);
-    ApiResponse<BalanceResponse> MakeWithdraw(TransactionRequest request);
-    ApiResponse<BalanceResponse> MakeTransfer(TransactionRequest request);
+    Task<ApiResponse<AccountDto>> CreateAccount(CreateAccountRequest request);
+    Task<ApiResponse<AccountDto>> GetAccount(AccountRequest request);
+    Task<ApiResponse<BalanceResponse>> MakeDeposit(TransactionRequest request);
+    Task<ApiResponse<BalanceResponse>> MakeWithdraw(TransactionRequest request);
+    Task<ApiResponse<BalanceResponse>> MakeTransfer(TransactionRequest request);
     Task<ApiResponse<ConvertedBalances>> GetConvertedBalanceAsync(AccountRequest accountRequest,
         CurrencyRequest currencyRequest);
 }
