@@ -55,6 +55,6 @@ A simple RESTful banking API built with **ASP.NET Core** and **MySQL** for learn
 
 - To get your balance in different currencies:
   Send a Get request as follows:
-  `GET http://localhost:5283/api/Account/{accountNumber}/balances?currency=EUR,CAD,RUB`
+  ```GET http://localhost:5283/api/Account/{accountNumber}/balances?currency=EUR,CAD,RUB```
 
 
