@@ -145,10 +145,9 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
         };
     }
 
-    public ApiResponse<ConvertedBalances> GetConvertedBalance(AccountRequest accountRequest, CurrencyRequest currencyRequest)
+    public async Task<ApiResponse<ConvertedBalances>> GetConvertedBalanceAsync(AccountRequest accountRequest, CurrencyRequest currencyRequest)
     {
         var account = _accountRepository.GetAccountById(accountRequest);
-        
         if (account is null)
         {
             return new ApiResponse<ConvertedBalances>
@@ -157,22 +156,27 @@ public class AccountsServices(IAccountRepository _accountRepository, ICurrencySe
                 HttpStatusCode = 404
             };
         }
-        
-        string[] requestedCurrencies = currencyRequest.Currency.Split(',');
-        var fetchedCurrencies = _currencyServices.ConvertToCurrency().Result;
-        var convertedBalancesDict = new ConvertedBalances();
+
+        string[] requestedCurrencies = currencyRequest.Currency?.Split(
+                                           ',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                                            ?? Array.Empty<string>();
+        Console.WriteLine("Requested currencies: " + string.Join(", ", requestedCurrencies));
+
+        var fetchedCurrencies = await _currencyServices.ConvertToCurrency();
+
+        var convertedBalances = new ConvertedBalances();
 
         foreach (var currency in requestedCurrencies)
         {
             if (fetchedCurrencies.ContainsKey(currency))
             {
-                convertedBalancesDict.convertedBalances.Add(currency, fetchedCurrencies[currency] * account.Result.Balance);
+                convertedBalances.convertedBalances[currency] = fetchedCurrencies[currency] * account.Result.Balance;
             }
         }
-        
+
         return new ApiResponse<ConvertedBalances>
         {
-            Result = convertedBalancesDict,
+            Result = convertedBalances,
             HttpStatusCode = 200
         };
     }

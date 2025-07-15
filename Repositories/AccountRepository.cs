@@ -21,17 +21,18 @@ public class AccountRepository(AccountsContext _context) : IAccountRepository
         _context.Accounts.Add(account);
         _context.SaveChanges();
 
-        return Task.FromResult(new AccountResponse(account.AccountNumber, account.Name, account.Balance));
+        var newAccount = new AccountResponse(account.AccountNumber, account.Name, account.Balance);
+        return Task.FromResult<AccountResponse>(newAccount);
     }
 
-    public Task<AccountResponse>? UpdateAccount(AccountResponse accountResponse)
+    public Task<AccountResponse?> UpdateAccount(AccountResponse accountResponse)
     {
         var account = _context.Accounts.FirstOrDefault(account => 
             account.AccountNumber == accountResponse.AccountId);
         
         if (account is null)
         {
-            return null;
+            return Task.FromResult<AccountResponse?>(null);
         }
         
         account.AccountNumber = accountResponse.AccountId;
@@ -40,19 +41,21 @@ public class AccountRepository(AccountsContext _context) : IAccountRepository
         
         _context.SaveChanges();
 
-        return Task.FromResult(new AccountResponse(account.AccountNumber, account.Name, account.Balance));
+        var newAccount = new AccountResponse(account.AccountNumber, account.Name, account.Balance);
+        return Task.FromResult<AccountResponse?>(newAccount);
     }
 
-    public Task<AccountResponse>? GetAccountById(AccountRequest accountRequest)
+    public Task<AccountResponse?> GetAccountById(AccountRequest accountRequest)
     {
         var account = _context.Accounts.FirstOrDefault(account => 
             account.AccountNumber == accountRequest.AccountId);
         
         if (account is null)
         {
-            return null;
+            return Task.FromResult<AccountResponse?>(null);
         }
 
-        return Task.FromResult(new AccountResponse(account.AccountNumber, account.Name, account.Balance));
+        var accountResponse = new AccountResponse(account.AccountNumber, account.Name, account.Balance);
+        return Task.FromResult<AccountResponse?>(accountResponse);
     }
 }

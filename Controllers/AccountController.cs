@@ -129,17 +129,18 @@ public class AccountController(IAccountsService service) : ControllerBase
     /// <returns>The list of the converted balance or an error response</returns>
     [HttpGet("{accountNumber}/balances")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    public IActionResult CheckConvertedBalance(Guid accountNumber, [FromBody] CurrencyRequest currencyRequest)
+    public async Task<IActionResult> CheckConvertedBalance(Guid accountNumber, [FromQuery] string currency)
     {
-        var response = service.GetConvertedBalance(new AccountRequest { AccountId = accountNumber }, 
-            new CurrencyRequest {  Currency = currencyRequest.Currency });
+        var response = await service.GetConvertedBalanceAsync(
+            new AccountRequest { AccountId = accountNumber },
+            new CurrencyRequest { Currency = currency });
 
         if (!response.IsSuccess)
         {
             return StatusCode(response.HttpStatusCode, response);
         }
+
         return Ok(response);
     }
 }

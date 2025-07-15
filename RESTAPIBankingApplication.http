@@ -10,7 +10,7 @@ Content-Type: application/json
 }
 
 ###
-GET {{rootURL}}/api/Account/kk
+GET {{rootURL}}/api/Account/899d68c6-2dee-41e9-a757-23fd2cc32bd5
 Accept: application/json
 Content-Type: application/json
 
@@ -63,11 +63,7 @@ Content-Type: application/json
 }
 
 ###
-GET {{rootURL}}/api/Account/899d68c6-2dee-41e9-a757-23fd2cc32bd5/balances
+GET {{rootURL}}/api/Account/899d68c6-2dee-41e9-a757-23fd2cc32bd5/balances?currency=EUR,CAD
 Accept: application/json
 Content-Type: application/json
-
-{
-  "Currency": "EUR"
-}
 

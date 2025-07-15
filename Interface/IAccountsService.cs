@@ -10,5 +10,6 @@ public interface IAccountsService
     ApiResponse<BalanceResponse> MakeDeposit(TransactionRequest request);
     ApiResponse<BalanceResponse> MakeWithdraw(TransactionRequest request);
     ApiResponse<BalanceResponse> MakeTransfer(TransactionRequest request);
-    ApiResponse<ConvertedBalances> GetConvertedBalance(AccountRequest accountRequest, CurrencyRequest currencyRequest);
+    Task<ApiResponse<ConvertedBalances>> GetConvertedBalanceAsync(AccountRequest accountRequest,
+        CurrencyRequest currencyRequest);
 }
