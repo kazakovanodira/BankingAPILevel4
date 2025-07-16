@@ -8,11 +8,13 @@ using banking_api_repo.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddScoped<IAccountsService, AccountsServices>();
 builder.Services.AddScoped<ICurrencyServices, CurrencyService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.Configure<CurrencyApiSettings>(
+    builder.Configuration.GetSection("CurrencyApi"));
+builder.Services.AddHttpClient<ICurrencyServices, CurrencyService>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
