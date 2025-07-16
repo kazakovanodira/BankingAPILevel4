@@ -1,8 +1,8 @@
 using banking_api_repo.Data;
 using banking_api_repo.Interface;
 using banking_api_repo.Models;
-using banking_api_repo.Models.Requests;
 using banking_api_repo.Models.Responses;
+using banking_api_repo.Mapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace banking_api_repo.Repositories;
@@ -44,8 +44,8 @@ public class AccountRepository : IAccountRepository
         account.Balance = balance;
         
         await _context.SaveChangesAsync();
-        //mapper
-        return accountDto;
+        
+        return ManualMapper.ConvertToDto(account);
     }
 
     public async Task<AccountDto?> GetAccountById(Guid accountId)
@@ -58,8 +58,6 @@ public class AccountRepository : IAccountRepository
             return null;
         }
         
-        //mapper
-        var accountResponse = new AccountDto(account.AccountNumber, account.Name, account.Balance);
-        return accountResponse;
+        return ManualMapper.ConvertToDto(account);
     }
 }

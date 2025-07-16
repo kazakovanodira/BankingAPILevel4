@@ -148,25 +148,14 @@ public class AccountsServices : IAccountsService
                 HttpStatusCode = 404
             };
         }
-
-        /*string[] requestedCurrencies = currencyRequest.Currency?.Split(
-                                           ',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                                            ?? Array.Empty<string>(); //USD,CAD*/
-
+        
         var fetchedCurrencies = await _currencyServices.ConvertToCurrency();
 
         var convertedBalances = new ConvertedBalances();
 
-        foreach (var currency in requestedCurrencies)
+        foreach (var currency in fetchedCurrencies)
         {
-            if (fetchedCurrencies.ContainsKey(currency))
-            {
-                convertedBalances.Add(currency, Math.Round(fetchedCurrencies[currency] * account.Balance, 2));
-            }
-            else
-            {
-                convertedBalances.Add(currency + "not found", 0);
-            }
+            convertedBalances.Add(currency.Key, Math.Round(fetchedCurrencies[currency.Key] * account.Balance, 2));
         }
 
         return new ApiResponse<ConvertedBalances>

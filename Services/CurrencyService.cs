@@ -13,14 +13,12 @@ public class CurrencyService : ICurrencyServices
             var endpoint = new Uri("https://api.freecurrencyapi.com/v1/latest?apikey=fca_live_bC3MRgGRkcSUkEpNW7dQJ8bNqboiMe2f33CL3F4V?currencies=EUR,CAD");
             var jsonString = await client.GetStringAsync(endpoint);
             Console.WriteLine(jsonString);
-            /*jsonString = jsonString.Remove(0, 8);
-            jsonString = jsonString.Remove(jsonString.Length - 1, 1);*/
             
+            CurrencyResponse currencyResponse = JsonSerializer.Deserialize<CurrencyResponse>(jsonString) ?? throw new NullReferenceException();
             
-            Dictionary<string, decimal> fetchedCurrencies = JsonSerializer.Deserialize<Dictionary<string, decimal>>(jsonString) ?? 
-                                               new Dictionary<string, decimal>();
+            //Dictionary<string, decimal> fetchedCurrencies = JsonSerializer.Deserialize<Dictionary<string, decimal>>(jsonString) ?? new Dictionary<string, decimal>();
             
-            return fetchedCurrencies;
+            return currencyResponse.Data;
         }
     }
 }
