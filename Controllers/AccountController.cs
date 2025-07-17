@@ -132,7 +132,7 @@ public class AccountController : ControllerBase
     /// Converts balance of the specified account to the requested currencies.
     /// </summary>
     /// <param name="accountNumber">The account number to check balance from</param>
-    /// <param name="currencyRequest">The currencies to convert the balance to.</param>
+    /// <param name="currency">The currencies to convert the balance to.</param>
     /// <returns>The list of the converted balance.</returns>
     [HttpGet("{accountNumber}/balances")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
