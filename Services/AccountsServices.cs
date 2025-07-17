@@ -1,4 +1,5 @@
 using banking_api_repo.Interface;
+using banking_api_repo.Mapper;
 using banking_api_repo.Models.Requests;
 using banking_api_repo.Models.Responses;
 
@@ -21,7 +22,7 @@ public class AccountsServices : IAccountsService
         
         return new ApiResponse<AccountDto>
         {
-            Result = await _accountRepository.AddAccount(newAccount),
+            Result = ManualMapper.ConvertToDto(await _accountRepository.AddAccount(newAccount)),
             HttpStatusCode = 201
         };
     }
@@ -41,7 +42,7 @@ public class AccountsServices : IAccountsService
         
         return new ApiResponse<AccountDto>
         {
-            Result = account,
+            Result = ManualMapper.ConvertToDto(account),
             HttpStatusCode = 200
         };
     }
@@ -59,12 +60,11 @@ public class AccountsServices : IAccountsService
             };
         }
         
-        var newBalance = account.Balance + request.Amount;
-        await _accountRepository.UpdateAccount(request.SenderAccId, newBalance);
+        await _accountRepository.UpdateAccount(account, request.Amount);
 
         return new ApiResponse<BalanceResponse>
         {
-            Result = new BalanceResponse(newBalance),
+            Result = new BalanceResponse(account.Balance),
             HttpStatusCode = 200
         };
     }
@@ -91,8 +91,7 @@ public class AccountsServices : IAccountsService
             };
         }
         
-        var newBalance = account.Balance - request.Amount;
-        await _accountRepository.UpdateAccount(request.SenderAccId, newBalance);
+        await _accountRepository.UpdateAccount(account, request.Amount*-1);
 
         return new ApiResponse<BalanceResponse>
         {
@@ -125,15 +124,12 @@ public class AccountsServices : IAccountsService
             };
         }
         
-        var newSenderBalance = sender.Balance - request.Amount;
-        var newReceiverBalance = receiver.Balance + request.Amount;
-
-        await _accountRepository.UpdateAccount(request.SenderAccId, newSenderBalance);
-        await _accountRepository.UpdateAccount(request.ReceiverAccId, newReceiverBalance);
+        await _accountRepository.UpdateAccount(sender, request.Amount*-1);
+        await _accountRepository.UpdateAccount(receiver, request.Amount);
 
         return new ApiResponse<BalanceResponse>
         {
-            Result = new BalanceResponse(newSenderBalance),
+            Result = new BalanceResponse(sender.Balance),
             HttpStatusCode = 200
         };
     }
@@ -154,11 +150,20 @@ public class AccountsServices : IAccountsService
 
         var convertedBalances = new ConvertedBalances();
 
+        if (fetchedCurrencies is null)
+        {
+            return new ApiResponse<ConvertedBalances>
+            {
+                ErrorMessage = "API didn't give any response.",
+                HttpStatusCode = 404
+            };
+        }
+
         foreach (var currency in fetchedCurrencies)
         {
             convertedBalances.Add(currency.Key, Math.Round(fetchedCurrencies[currency.Key] * account.Balance, 2));
         }
-
+        
         return new ApiResponse<ConvertedBalances>
         {
             Result = convertedBalances,

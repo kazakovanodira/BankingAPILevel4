@@ -16,7 +16,7 @@ public class AccountRepository : IAccountRepository
         _context = context;
     }
     
-    public async Task<AccountDto> AddAccount(AccountDto accountDto)
+    public async Task<Account> AddAccount(AccountDto accountDto)
     {
         var account = new Account
         {
@@ -28,36 +28,18 @@ public class AccountRepository : IAccountRepository
         _context.Accounts.Add(account);
         await _context.SaveChangesAsync();
 
-        return accountDto;
+        return account;
     }
 
-    public async Task<AccountDto?> UpdateAccount(Guid accountId, decimal balance)
+    public async Task<Account?> UpdateAccount(Account account, decimal amount)
     {
-        var account = _context.Accounts.FirstOrDefault(account => 
-            account.AccountNumber == accountId);
-        
-        if (account is null)
-        {
-            return null;
-        }
-        
-        account.Balance = balance;
+        account.Balance += amount;
         
         await _context.SaveChangesAsync();
         
-        return ManualMapper.ConvertToDto(account);
+        return account;
     }
 
-    public async Task<AccountDto?> GetAccountById(Guid accountId)
-    {
-        var account = await _context.Accounts.FirstOrDefaultAsync(account => 
-            account.AccountNumber == accountId);
-        
-        if (account is null)
-        {
-            return null;
-        }
-        
-        return ManualMapper.ConvertToDto(account);
-    }
+    public async Task<Account?> GetAccountById(Guid accountId) =>
+        await _context.Accounts.FirstOrDefaultAsync(account => account.AccountNumber == accountId);
 }
