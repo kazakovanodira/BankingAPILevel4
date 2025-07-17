@@ -17,20 +17,15 @@ public class CurrencyService : ICurrencyServices
         _apiSettings = options.Value;
     }
     
-    public async Task<Dictionary<string, decimal>> ConvertToCurrency(CurrencyRequest currencyRequest)
+    public async Task<Dictionary<string, decimal>?> ConvertToCurrency(CurrencyRequest currencyRequest)
     {
         var requestUrl = $"{_apiSettings.BaseUrl}?apikey={_apiSettings.ApiKey}&currencies={currencyRequest.Currency}";
         var response = await _httpClient.GetAsync(requestUrl);
         
         if (!response.IsSuccessStatusCode)
         {
-            return new Dictionary<string, decimal>
-            {
-                {
-                    "$\"Currency API request failed.", 0
-                }
-            };
-        };
+            return null;
+        }
         
         var jsonString = await response.Content.ReadAsStringAsync();
 
@@ -40,10 +35,7 @@ public class CurrencyService : ICurrencyServices
         if (currencyResponse?.Data is null || 
             currencyResponse.Data.Count is 0)
         {
-            return new Dictionary<string, decimal>
-            {
-                { "ERROR", 0 }
-            };
+            return null;
         }
         
         return currencyResponse.Data;
