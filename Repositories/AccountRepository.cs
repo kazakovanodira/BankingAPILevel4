@@ -2,7 +2,6 @@ using banking_api_repo.Data;
 using banking_api_repo.Interface;
 using banking_api_repo.Models;
 using banking_api_repo.Models.Responses;
-using banking_api_repo.Mapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace banking_api_repo.Repositories;
