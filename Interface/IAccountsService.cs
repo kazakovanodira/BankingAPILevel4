@@ -10,6 +10,6 @@ public interface IAccountsService
     Task<ApiResponse<BalanceResponse>> MakeDeposit(TransactionRequest request);
     Task<ApiResponse<BalanceResponse>> MakeWithdraw(TransactionRequest request);
     Task<ApiResponse<BalanceResponse>> MakeTransfer(TransactionRequest request);
-    Task<ApiResponse<ConvertedBalances>> GetConvertedBalanceAsync(AccountRequest accountRequest,
-        CurrencyRequest currencyRequest);
+    Task<ApiResponse<ConvertedBalances>> GetConvertedBalanceAsync(
+        AccountRequest accountRequest, CurrencyRequest currencyRequest);
 }

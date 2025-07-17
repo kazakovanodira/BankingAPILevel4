@@ -14,6 +14,7 @@ public class AccountsServices : IAccountsService
         _accountRepository = accountRepository;
         _currencyServices = currencyServices;
     }
+    
     public async Task<ApiResponse<AccountDto>> CreateAccount(CreateAccountRequest request)
     {
         var newAccount = new AccountDto(Guid.NewGuid(), request.Name, 0);
