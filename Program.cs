@@ -14,7 +14,10 @@ builder.Services.AddScoped<ICurrencyServices, CurrencyService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.Configure<CurrencyApiSettings>(
     builder.Configuration.GetSection("CurrencyApi"));
-builder.Services.AddHttpClient<ICurrencyServices, CurrencyService>();
+builder.Services.AddHttpClient<ICurrencyServices, CurrencyService>(client =>
+{
+    client.BaseAddress = new Uri( "https://api.freecurrencyapi.com/v1/latest");
+});
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
