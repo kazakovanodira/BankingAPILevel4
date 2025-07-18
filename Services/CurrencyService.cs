@@ -17,7 +17,7 @@ public class CurrencyService : ICurrencyServices
         _apiSettings = options.Value;
     }
     
-    public async Task<Dictionary<string, decimal>?> FetchCurrencyApi(CurrencyRequest currencyRequest)
+    public async Task<Dictionary<string, decimal>?> FetchExchangeRates(CurrencyRequest currencyRequest)
     {
         var requestUrl = $"?apikey={_apiSettings.ApiKey}&currencies={currencyRequest.Currency}";
         var response = await _httpClient.GetAsync(requestUrl);

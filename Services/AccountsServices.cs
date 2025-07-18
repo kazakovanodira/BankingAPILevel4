@@ -146,7 +146,7 @@ public class AccountsServices : IAccountsService
             };
         }
         
-        var fetchedCurrencies = await _currencyServices.FetchCurrencyApi(currencyRequest);
+        var fetchedCurrencies = await _currencyServices.FetchExchangeRates(currencyRequest);
 
         var convertedBalances = new ConvertedBalances();
 
