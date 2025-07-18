@@ -5,8 +5,5 @@ namespace banking_api_repo.Mapper;
 
 public static class ManualMapper
 {
-    public static AccountDto ConvertToDto(Account account)
-    {
-        return new AccountDto(account.AccountNumber, account.Name, account.Balance);
-    }
+    public static AccountDto ConvertToDto(Account account) => new AccountDto(account.AccountNumber, account.Name, account.Balance);
 }
