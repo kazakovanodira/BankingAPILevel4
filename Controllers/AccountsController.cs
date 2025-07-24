@@ -10,6 +10,7 @@ namespace banking_api_repo.Controllers;
 public class AccountsController : ControllerBase
 {
     private readonly IAccountsService _service;
+    private const int maxAccountsPageSize = 10;
 
     public AccountsController(IAccountsService service)
     {
@@ -43,9 +44,14 @@ public class AccountsController : ControllerBase
     /// <returns>The list of accounts with the specified name or the list of all accounts.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAccounts(string? name)
+    public async Task<IActionResult> GetAccounts(string? name, int pageNumber = 1, int pageSize = 5)
     {
-        var accountList = await _service.GetAccounts(name);
+        if (pageSize > maxAccountsPageSize)
+        {
+            pageSize = maxAccountsPageSize;
+        }
+        
+        var accountList = await _service.GetAccounts(name, pageNumber, pageSize);
         return Ok(accountList);
     } 
     
