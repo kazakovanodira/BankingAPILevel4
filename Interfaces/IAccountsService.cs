@@ -1,3 +1,4 @@
+using banking_api_repo.Models;
 using banking_api_repo.Models.Requests;
 using banking_api_repo.Models.Responses;
 
@@ -7,6 +8,7 @@ public interface IAccountsService
 {
     Task<ApiResponse<AccountDto>> CreateAccount(CreateAccountRequest request);
     Task<ApiResponse<AccountDto>> GetAccount(AccountRequest request);
+    Task<ApiResponse<IEnumerable<AccountDto>>> GetAccounts(string? name);
     Task<ApiResponse<BalanceResponse>> MakeDeposit(TransactionRequest request);
     Task<ApiResponse<BalanceResponse>> MakeWithdraw(TransactionRequest request);
     Task<ApiResponse<BalanceResponse>> MakeTransfer(TransactionRequest request);

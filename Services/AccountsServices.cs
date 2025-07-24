@@ -1,5 +1,6 @@
 using banking_api_repo.Interface;
 using banking_api_repo.Mapper;
+using banking_api_repo.Models;
 using banking_api_repo.Models.Requests;
 using banking_api_repo.Models.Responses;
 
@@ -24,6 +25,15 @@ public class AccountsServices : IAccountsService
         {
             Result = ManualMapper.ConvertToDto(await _accountRepository.AddAccount(newAccount)),
             HttpStatusCode = 201
+        };
+    }
+    
+    public async Task<ApiResponse<IEnumerable<AccountDto>>> GetAccounts(string? name)
+    {
+        return new ApiResponse<IEnumerable<AccountDto>>
+        {
+            Result = ManualMapper.ConvertToEnumerableDto(await _accountRepository.GetAccountsAsync(name)),
+            HttpStatusCode = 200
         };
     }
 

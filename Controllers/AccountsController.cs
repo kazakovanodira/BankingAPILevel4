@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace banking_api_repo.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class AccountController : ControllerBase
+[Route("api/accounts")]
+public class AccountsController : ControllerBase
 {
     private readonly IAccountsService _service;
 
-    public AccountController(IAccountsService service)
+    public AccountsController(IAccountsService service)
     {
         _service = service;
     }
@@ -35,6 +35,19 @@ public class AccountController : ControllerBase
         
         return CreatedAtAction(nameof(GetAccount), new { accountNumber = account.Result.AccountId }, account);
     }
+    
+    /// <summary>
+    /// Retrieves accounts with the specified name or the list of all accounts otherwise.
+    /// </summary>
+    /// <param name="name">The name to retrieve accounts by.</param>
+    /// <returns>The list of accounts with the specified name or the list of all accounts.</returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAccounts(string? name)
+    {
+        var accountList = await _service.GetAccounts(name);
+        return Ok(accountList);
+    } 
     
     /// <summary>
     /// Retrieves account details by account number.

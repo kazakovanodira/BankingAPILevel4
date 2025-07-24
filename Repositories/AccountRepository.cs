@@ -41,4 +41,22 @@ public class AccountRepository : IAccountRepository
 
     public async Task<Account?> GetAccountById(Guid accountId) =>
         await _context.Accounts.FirstOrDefaultAsync(account => account.AccountNumber == accountId);
+    
+    public async Task<IEnumerable<Account>> GetAccountsAsync() =>
+        await _context.Accounts.OrderBy(account => account.Name).ToListAsync();
+    
+
+    public async Task<IEnumerable<Account>> GetAccountsAsync(string? name)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            return await GetAccountsAsync();
+        }
+
+        name = name.Trim();
+        return await _context.Accounts
+            .Where(account => account.Name == name)
+            .OrderBy(account => account.Name)
+            .ToListAsync();
+    }
 }
