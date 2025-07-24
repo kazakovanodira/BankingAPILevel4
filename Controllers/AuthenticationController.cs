@@ -33,7 +33,11 @@ public class AuthenticationController : ControllerBase
         Guid AccountNumber,
         decimal Balance);
     
-    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="authenticationRequestBody"></param>
+    /// <returns></returns>
     [HttpPost("authenticate")]
     public ActionResult<string> Authenticate(AuthenticationRequestBody authenticationRequestBody)
     {
