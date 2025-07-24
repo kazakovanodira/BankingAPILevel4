@@ -28,11 +28,15 @@ public class AccountsServices : IAccountsService
         };
     }
     
-    public async Task<ApiResponse<IEnumerable<AccountDto>>> GetAccounts(string? name, int pageNumber, int pageSize)
+    public async Task<ApiResponse<(IEnumerable<AccountDto>, PaginationMetadata)>> GetAccounts(string? name, int pageNumber, int pageSize)
     {
-        return new ApiResponse<IEnumerable<AccountDto>>
+        var (accounts, paginationMetadata) = await _accountRepository.GetAccountsAsync(name, pageNumber, pageSize);
+
+        var accountDtos = ManualMapper.ConvertToEnumerableDto(accounts);
+        
+        return new ApiResponse<(IEnumerable<AccountDto>, PaginationMetadata)>
         {
-            Result = ManualMapper.ConvertToEnumerableDto(await _accountRepository.GetAccountsAsync(name, pageNumber, pageSize)),
+            Result = (accountDtos, paginationMetadata),
             HttpStatusCode = 200
         };
     }

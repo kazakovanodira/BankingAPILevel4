@@ -1,3 +1,4 @@
+using System.Text.Json;
 using banking_api_repo.Interface;
 using banking_api_repo.Models.Requests;
 using banking_api_repo.Models.Responses;
@@ -51,8 +52,11 @@ public class AccountsController : ControllerBase
             pageSize = maxAccountsPageSize;
         }
         
-        var accountList = await _service.GetAccounts(name, pageNumber, pageSize);
-        return Ok(accountList);
+        var response = await _service.GetAccounts(name, pageNumber, pageSize);
+        
+        Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(response.Result.Item2));
+        
+        return Ok(response.Result.Item1);
     } 
     
     /// <summary>

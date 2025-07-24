@@ -2,6 +2,7 @@ using banking_api_repo.Data;
 using banking_api_repo.Interface;
 using banking_api_repo.Models;
 using banking_api_repo.Models.Responses;
+using banking_api_repo.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace banking_api_repo.Repositories;
@@ -46,7 +47,7 @@ public class AccountRepository : IAccountRepository
         await _context.Accounts.OrderBy(account => account.Name).ToListAsync();
     
 
-    public async Task<IEnumerable<Account>> GetAccountsAsync(string? name, int pageNumber, int pageSize)
+    public async Task<(IEnumerable<Account>, PaginationMetadata)> GetAccountsAsync(string? name, int pageNumber, int pageSize)
     {
         var accountsCollection = _context.Accounts as IQueryable<Account>;
 
@@ -55,11 +56,17 @@ public class AccountRepository : IAccountRepository
             name = name.Trim();
             accountsCollection = accountsCollection.Where(account => account.Name == name);
         }
+
+        var totalItemCount = await accountsCollection.CountAsync();
+
+        var paginationMetadata = new PaginationMetadata(totalItemCount, pageSize, pageNumber);
         
-        return await accountsCollection
+        var collectionToReturn = await accountsCollection
             .OrderBy(account => account.Name)
             .Skip(pageSize * (pageNumber - 1))
             .Take(pageSize)
             .ToListAsync();
+
+        return (collectionToReturn, paginationMetadata);
     }
 }
