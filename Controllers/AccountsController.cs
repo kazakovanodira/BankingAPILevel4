@@ -11,7 +11,7 @@ namespace banking_api_repo.Controllers;
 public class AccountsController : ControllerBase
 {
     private readonly IAccountsService _service;
-    private const int maxAccountsPageSize = 10;
+    private const int MaxAccountsPageSize = 10;
 
     public AccountsController(IAccountsService service)
     {
@@ -53,9 +53,9 @@ public class AccountsController : ControllerBase
         string? orderBy = "Name",
         bool descending = false)
     {
-        if (pageSize > maxAccountsPageSize)
+        if (pageSize > MaxAccountsPageSize)
         {
-            pageSize = maxAccountsPageSize;
+            pageSize = MaxAccountsPageSize;
         }
         
         var response = await _service.GetAccounts(name, pageNumber, pageSize, orderBy, descending);
