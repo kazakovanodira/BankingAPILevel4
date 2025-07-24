@@ -8,7 +8,7 @@ public interface IAccountsService
 {
     Task<ApiResponse<AccountDto>> CreateAccount(CreateAccountRequest request);
     Task<ApiResponse<AccountDto>> GetAccount(AccountRequest request);
-    Task<ApiResponse<IEnumerable<AccountDto>>> GetAccounts(string? name);
+    Task<ApiResponse<IEnumerable<AccountDto>>> GetAccounts(string? name, int pageNumber, int pageSize);
     Task<ApiResponse<BalanceResponse>> MakeDeposit(TransactionRequest request);
     Task<ApiResponse<BalanceResponse>> MakeWithdraw(TransactionRequest request);
     Task<ApiResponse<BalanceResponse>> MakeTransfer(TransactionRequest request);

@@ -46,17 +46,20 @@ public class AccountRepository : IAccountRepository
         await _context.Accounts.OrderBy(account => account.Name).ToListAsync();
     
 
-    public async Task<IEnumerable<Account>> GetAccountsAsync(string? name)
+    public async Task<IEnumerable<Account>> GetAccountsAsync(string? name, int pageNumber, int pageSize)
     {
-        if (string.IsNullOrEmpty(name))
-        {
-            return await GetAccountsAsync();
-        }
+        var accountsCollection = _context.Accounts as IQueryable<Account>;
 
-        name = name.Trim();
-        return await _context.Accounts
-            .Where(account => account.Name == name)
+        if (!string.IsNullOrEmpty(name))
+        {
+            name = name.Trim();
+            accountsCollection = accountsCollection.Where(account => account.Name == name);
+        }
+        
+        return await accountsCollection
             .OrderBy(account => account.Name)
+            .Skip(pageSize * (pageNumber - 1))
+            .Take(pageSize)
             .ToListAsync();
     }
 }
