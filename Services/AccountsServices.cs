@@ -28,9 +28,13 @@ public class AccountsServices : IAccountsService
         };
     }
     
-    public async Task<ApiResponse<(IEnumerable<AccountDto>, PaginationMetadata)>> GetAccounts(string? name, int pageNumber, int pageSize)
+    public async Task<ApiResponse<(IEnumerable<AccountDto>, PaginationMetadata)>> GetAccounts(string? name, 
+        int pageNumber, 
+        int pageSize,
+        string? orderBy,
+        bool descending)
     {
-        var (accounts, paginationMetadata) = await _accountRepository.GetAccountsAsync(name, pageNumber, pageSize);
+        var (accounts, paginationMetadata) = await _accountRepository.GetAccountsAsync(name, pageNumber, pageSize, orderBy, descending);
 
         var accountDtos = ManualMapper.ConvertToEnumerableDto(accounts);
         

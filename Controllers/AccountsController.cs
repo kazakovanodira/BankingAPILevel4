@@ -47,14 +47,18 @@ public class AccountsController : ControllerBase
     /// <returns>The list of accounts with the specified name or the list of all accounts.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAccounts(string? name, int pageNumber = 1, int pageSize = 5)
+    public async Task<IActionResult> GetAccounts(string? name, 
+        int pageNumber = 1, 
+        int pageSize = 5,
+        string? orderBy = "Name",
+        bool descending = false)
     {
         if (pageSize > maxAccountsPageSize)
         {
             pageSize = maxAccountsPageSize;
         }
         
-        var response = await _service.GetAccounts(name, pageNumber, pageSize);
+        var response = await _service.GetAccounts(name, pageNumber, pageSize, orderBy, descending);
         
         Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(response.Result.Item2));
         

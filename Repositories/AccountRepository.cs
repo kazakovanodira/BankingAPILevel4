@@ -47,7 +47,11 @@ public class AccountRepository : IAccountRepository
         await _context.Accounts.OrderBy(account => account.Name).ToListAsync();
     
 
-    public async Task<(IEnumerable<Account>, PaginationMetadata)> GetAccountsAsync(string? name, int pageNumber, int pageSize)
+    public async Task<(IEnumerable<Account>, PaginationMetadata)> GetAccountsAsync(string? name, 
+        int pageNumber, 
+        int pageSize,
+        string? orderBy,
+        bool descending)
     {
         var accountsCollection = _context.Accounts as IQueryable<Account>;
 
@@ -56,17 +60,30 @@ public class AccountRepository : IAccountRepository
             name = name.Trim();
             accountsCollection = accountsCollection.Where(account => account.Name == name);
         }
+        
+        if (!string.IsNullOrEmpty(orderBy))
+        {
+            accountsCollection = orderBy.ToLower() switch
+            {
+                "balance" => descending
+                    ? accountsCollection.OrderByDescending(a => a.Balance)
+                    : accountsCollection.OrderBy(a => a.Balance),
+
+                _ => descending
+                    ? accountsCollection.OrderByDescending(a => a.Name)
+                    : accountsCollection.OrderBy(a => a.Name),
+            };
+        }
 
         var totalItemCount = await accountsCollection.CountAsync();
 
         var paginationMetadata = new PaginationMetadata(totalItemCount, pageSize, pageNumber);
         
         var collectionToReturn = await accountsCollection
-            .OrderBy(account => account.Name)
             .Skip(pageSize * (pageNumber - 1))
             .Take(pageSize)
             .ToListAsync();
-
+        
         return (collectionToReturn, paginationMetadata);
     }
 }
