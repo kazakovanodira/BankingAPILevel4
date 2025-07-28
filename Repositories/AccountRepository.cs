@@ -36,6 +36,8 @@ public class AccountRepository : IAccountRepository
     public async Task<User?> GetAccountById(Guid accountId) => 
         await _userManager.Users.FirstOrDefaultAsync(u => u.AccountNumber == accountId);
     
+    public async Task<User?> GetAccountByUserName(string username) => 
+        await _userManager.FindByNameAsync(username);
     
     public async Task<IEnumerable<User>> GetAccountsAsync() =>
         await _userManager.Users.OrderBy(u => u.Name).ToListAsync();
@@ -47,7 +49,7 @@ public class AccountRepository : IAccountRepository
         string? orderBy,
         bool descending)
     {
-        var accountsCollection = _userManager.Users as IQueryable<User>;
+        var accountsCollection = _userManager.Users;
 
         if (!string.IsNullOrEmpty(name))
         {

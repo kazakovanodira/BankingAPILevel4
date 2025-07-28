@@ -51,7 +51,7 @@ public class AccountsServices : IAccountsService
     {
         var (accounts, paginationMetadata) = await _accountRepository.GetAccountsAsync(name, pageNumber, pageSize, orderBy, descending);
 
-        var accountDtos = ManualMapper.ConvertToEnumerableDto(accounts);
+        var accountDtos = _mapper.Map<IEnumerable<AccountDto>>(accounts);
         
         return new ApiResponse<(IEnumerable<AccountDto>, PaginationMetadata)>
         {
@@ -75,7 +75,27 @@ public class AccountsServices : IAccountsService
         
         return new ApiResponse<AccountDto>
         {
-            Result = ManualMapper.ConvertToDto(account),
+            Result = _mapper.Map<AccountDto>(account),
+            HttpStatusCode = 200
+        };
+    }
+    
+    public async Task<ApiResponse<AccountDto>> FindAccountByUsername(string username)
+    {
+        var account = await _accountRepository.GetAccountByUserName(username);
+        
+        if (account is null)
+        {
+            return new ApiResponse<AccountDto>
+            {
+                ErrorMessage = "Account not found.",
+                HttpStatusCode = 404
+            };
+        }
+        
+        return new ApiResponse<AccountDto>
+        {
+            Result = _mapper.Map<AccountDto>(account),
             HttpStatusCode = 200
         };
     }

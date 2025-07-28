@@ -8,6 +8,7 @@ public interface IAccountsService
 {
     Task<ApiResponse<AccountDto>> CreateAccount(CreateAccountRequest request);
     Task<ApiResponse<AccountDto>> GetAccount(AccountRequest request);
+    Task<ApiResponse<AccountDto>> FindAccountByUsername(string username);
     Task<ApiResponse<(IEnumerable<AccountDto>, PaginationMetadata)>>  GetAccounts(string? name, 
         int pageNumber, 
         int pageSize,
