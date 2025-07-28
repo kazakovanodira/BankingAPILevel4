@@ -1,6 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using banking_api_repo.Interface;
+using banking_api_repo.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,8 +24,11 @@ public class AuthenticationController : ControllerBase
     
     public class AuthenticationRequestBody
     {
-        public string? UserName { get; set; }
-        public string? Password { get; set; }
+        [Required(ErrorMessage = "Username is required to authenticate")]
+        public string UserName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Password is required to authenticate.")]
+        public string Password { get; set; } = string.Empty;
     }
 
     private record AccountUser(
@@ -55,7 +60,7 @@ public class AuthenticationController : ControllerBase
             securityKey, SecurityAlgorithms.HmacSha256);
 
         var claimsForToken = new List<Claim>();
-        claimsForToken.Add(new Claim("sub", user.AccountNumber.ToString()));
+        claimsForToken.Add(new Claim("sub", user.AccountId.ToString()));
         claimsForToken.Add(new Claim("name", user.Name));
         claimsForToken.Add(new Claim("balance", user.Balance.ToString("C")));
 
@@ -72,9 +77,14 @@ public class AuthenticationController : ControllerBase
         return Ok(tokenToReturn);
     }
 
-    private AccountUser ValidateUserCredentials(string? userName, string? password)
+    private AccountDto? ValidateUserCredentials(string userName, string password)
     {
+        var response = _service.FindAccountByUsername(userName);
+        if (response.Result.IsSuccess)
+        {
+            return response.Result.Result;
+        }
         
-        return new AccountUser("nodirak", "nodira", Guid.Empty, 0);
+        return null;
     }
 }
