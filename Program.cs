@@ -1,9 +1,12 @@
+using Asp.Versioning;
 using banking_api_repo.Data;
 using banking_api_repo.Interface;
+using banking_api_repo.Models;
 using banking_api_repo.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using banking_api_repo.Services;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,10 +27,29 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AccountsContext>(options => 
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), 
         new MySqlServerVersion(new Version(8, 0, 29))));
+builder.Services.AddDbContext<UserContext>(options => 
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), 
+        new MySqlServerVersion(new Version(8, 0, 29))));
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<UserContext>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Bank Application API", Version = "v1" });
+});
+builder.Services.AddApiVersioning(setupAction =>
+{
+    setupAction.ReportApiVersions = true;
+    setupAction.AssumeDefaultVersionWhenUnspecified = true;
+    setupAction.DefaultApiVersion = new ApiVersion(1, 0);
+}).AddMvc();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("MustHaveNonZeroaBalance", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+    });
 });
 
 var app = builder.Build();

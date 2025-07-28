@@ -1,16 +1,17 @@
 using banking_api_repo.Models;
 using banking_api_repo.Models.Responses;
 using banking_api_repo.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace banking_api_repo.Interface;
 
 public interface IAccountRepository
 {
-    Task<Account> AddAccount(AccountDto accountDto);
-    Task<Account?> UpdateAccount(Account account, decimal amount);
-    Task<Account?> GetAccountById(Guid accountId);
-    Task<IEnumerable<Account>> GetAccountsAsync();
-    Task<(IEnumerable<Account>, PaginationMetadata)> GetAccountsAsync(string? name, 
+    Task<(IdentityResult, User)> AddAccount(User user, string password);
+    Task<(IdentityResult, User)> UpdateAccount(User user, decimal amount);
+    Task<User?> GetAccountById(Guid accountId);
+    Task<IEnumerable<User>> GetAccountsAsync();
+    Task<(IEnumerable<User>, PaginationMetadata)> GetAccountsAsync(string? name, 
         int pageNumber, 
         int pageSize,
         string? orderBy,

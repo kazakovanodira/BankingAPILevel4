@@ -1,6 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using AutoMapper;
 using banking_api_repo.Interface;
+using banking_api_repo.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -26,7 +29,7 @@ public class AuthenticationController : ControllerBase
         public string? Password { get; set; }
     }
 
-    private record bankUser(
+    private record AccountUser(
         string UserName,
         string Name,
         Guid AccountNumber,
@@ -72,8 +75,9 @@ public class AuthenticationController : ControllerBase
         return Ok(tokenToReturn);
     }
 
-    private bankUser ValidateUserCredentials(string? userName, string? password)
+    private AccountUser ValidateUserCredentials(string? userName, string? password)
     {
-        return new bankUser("nodirak", "nodira", Guid.Empty, 0);
+        
+        return new AccountUser("nodirak", "nodira", Guid.Empty, 0);
     }
 }

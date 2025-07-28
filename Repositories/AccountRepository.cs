@@ -1,64 +1,58 @@
 using banking_api_repo.Data;
 using banking_api_repo.Interface;
 using banking_api_repo.Models;
-using banking_api_repo.Models.Responses;
 using banking_api_repo.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace banking_api_repo.Repositories;
 
 public class AccountRepository : IAccountRepository
 {
-    private readonly AccountsContext _context;
+    private readonly UserContext _context;
+    private readonly UserManager<User> _userManager;
 
-    public AccountRepository(AccountsContext context)
+    public AccountRepository(UserContext context, UserManager<User> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
     
-    public async Task<Account> AddAccount(AccountDto accountDto)
+    public async Task<(IdentityResult, User)> AddAccount(User user, string password)
     {
-        var account = new Account
-        {
-            AccountNumber = accountDto.AccountId,
-            Balance = accountDto.Balance,
-            Name = accountDto.Name
-        };
-        
-        _context.Accounts.Add(account);
+        var result = await _userManager.CreateAsync(user, password);
         await _context.SaveChangesAsync();
-
-        return account;
+        return (result, user);
     }
 
-    public async Task<Account?> UpdateAccount(Account account, decimal amount)
+    public async Task<(IdentityResult, User)> UpdateAccount(User user, decimal amount)
     {
-        account.Balance += amount;
-        
+        user.Balance += amount;
+        var result = await _userManager.UpdateAsync(user);
         await _context.SaveChangesAsync();
-        
-        return account;
+        return (result, user);
     }
 
-    public async Task<Account?> GetAccountById(Guid accountId) =>
-        await _context.Accounts.FirstOrDefaultAsync(account => account.AccountNumber == accountId);
+    public async Task<User?> GetAccountById(Guid accountId) => 
+        await _userManager.Users.FirstOrDefaultAsync(u => u.AccountNumber == accountId);
     
-    public async Task<IEnumerable<Account>> GetAccountsAsync() =>
-        await _context.Accounts.OrderBy(account => account.Name).ToListAsync();
+    
+    public async Task<IEnumerable<User>> GetAccountsAsync() =>
+        await _userManager.Users.OrderBy(u => u.Name).ToListAsync();
     
 
-    public async Task<(IEnumerable<Account>, PaginationMetadata)> GetAccountsAsync(string? name, 
+    public async Task<(IEnumerable<User>, PaginationMetadata)> GetAccountsAsync(string? name, 
         int pageNumber, 
         int pageSize,
         string? orderBy,
         bool descending)
     {
-        var accountsCollection = _context.Accounts as IQueryable<Account>;
+        var accountsCollection = _userManager.Users as IQueryable<User>;
 
         if (!string.IsNullOrEmpty(name))
         {
             name = name.Trim();
-            accountsCollection = accountsCollection.Where(account => account.Name == name);
+            accountsCollection = accountsCollection.Where(u => u.Name == name);
         }
         
         if (!string.IsNullOrEmpty(orderBy))

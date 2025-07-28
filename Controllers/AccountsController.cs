@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Asp.Versioning;
 using banking_api_repo.Interface;
 using banking_api_repo.Models.Requests;
 using banking_api_repo.Models.Responses;
@@ -7,7 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace banking_api_repo.Controllers;
 
 [ApiController]
-[Route("api/accounts")]
+[Route("api/v{version:apiVersion}/accounts")]
+[ApiVersion(1)]
 public class AccountsController : ControllerBase
 {
     private readonly IAccountsService _service;

@@ -1,8 +1,10 @@
+using AutoMapper;
 using banking_api_repo.Interface;
 using banking_api_repo.Mapper;
 using banking_api_repo.Models;
 using banking_api_repo.Models.Requests;
 using banking_api_repo.Models.Responses;
+using Microsoft.AspNetCore.Identity;
 
 namespace banking_api_repo.Services;
 
@@ -10,21 +12,34 @@ public class AccountsServices : IAccountsService
 {
     private readonly IAccountRepository _accountRepository;
     private readonly ICurrencyServices _currencyServices;
+    private readonly IMapper _mapper;
 
-    public AccountsServices(IAccountRepository accountRepository, ICurrencyServices currencyServices)
+    public AccountsServices(
+        IAccountRepository accountRepository, 
+        ICurrencyServices currencyServices, 
+        IMapper mapper)
     {
         _accountRepository = accountRepository;
         _currencyServices = currencyServices;
+        _mapper = mapper;
     }
     
     public async Task<ApiResponse<AccountDto>> CreateAccount(CreateAccountRequest request)
     {
-        var newAccount = new AccountDto(Guid.NewGuid(), request.Name, 0);
-        
+        var user = _mapper.Map<User>(request);
+        var (result, newUser) = await _accountRepository.AddAccount(user, request.Password);
+        if (result.Succeeded)
+        {
+            return new ApiResponse<AccountDto>
+            {
+                Result = _mapper.Map<AccountDto>(newUser),
+                HttpStatusCode = 201
+            };
+        }
         return new ApiResponse<AccountDto>
         {
-            Result = ManualMapper.ConvertToDto(await _accountRepository.AddAccount(newAccount)),
-            HttpStatusCode = 201
+            ErrorMessage = "Attempting to create a resource that already exists.",
+            HttpStatusCode = 409
         };
     }
     
