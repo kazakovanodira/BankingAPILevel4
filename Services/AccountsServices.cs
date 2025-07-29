@@ -28,18 +28,19 @@ public class AccountsServices : IAccountsService
     {
         var user = _mapper.Map<User>(request);
         var (result, newUser) = await _accountRepository.AddAccount(user, request.Password);
-        if (result.Succeeded)
+        if (!result.Succeeded)
         {
+            var errorMessage = string.Join(", ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
             return new ApiResponse<AccountDto>
             {
-                Result = _mapper.Map<AccountDto>(newUser),
-                HttpStatusCode = 201
+                ErrorMessage = errorMessage,
+                HttpStatusCode = 409
             };
         }
         return new ApiResponse<AccountDto>
         {
-            ErrorMessage = "Attempting to create a resource that already exists.",
-            HttpStatusCode = 409
+            Result = _mapper.Map<AccountDto>(newUser),
+            HttpStatusCode = 201
         };
     }
     

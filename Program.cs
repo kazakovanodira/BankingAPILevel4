@@ -1,7 +1,10 @@
 using Asp.Versioning;
+using AutoMapper;
 using banking_api_repo.Data;
 using banking_api_repo.Interface;
 using banking_api_repo.Models;
+using banking_api_repo.Models.Requests;
+using banking_api_repo.Models.Responses;
 using banking_api_repo.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -12,6 +15,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddAutoMapper(options =>
+{
+    options.CreateMap<CreateAccountRequest, User>();
+    options.CreateMap<User, AccountDto>();
+    options.CreateMap<Account, AccountDto>();
+    options.CreateMap<IEnumerable<User>, IEnumerable<AccountDto>>();
+});
 builder.Services.AddScoped<IAccountsService, AccountsServices>();
 builder.Services.AddScoped<ICurrencyServices, CurrencyService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
