@@ -9,12 +9,18 @@ using banking_api_repo.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using banking_api_repo.Services;
+using banking_api_repo.Utils;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.ReturnHttpNotAcceptable = true;
+    options.RespectBrowserAcceptHeader = true;
+    options.OutputFormatters.Add(new CsvOutputFormatter());
+});
 builder.Services.AddAutoMapper(options =>
 {
     options.CreateMap<CreateAccountRequest, User>();
