@@ -25,17 +25,11 @@ public class AuthenticationController : ControllerBase
     public class AuthenticationRequestBody
     {
         [Required(ErrorMessage = "Username is required to authenticate")]
-        public string UserName { get; set; } = string.Empty;
+        public string UserName { get; set; }
 
         [Required(ErrorMessage = "Password is required to authenticate.")]
-        public string Password { get; set; } = string.Empty;
+        public string Password { get; set; }
     }
-
-    private record AccountUser(
-        string UserName,
-        string Name,
-        Guid AccountNumber,
-        decimal Balance);
     
     /// <summary>
     /// 
