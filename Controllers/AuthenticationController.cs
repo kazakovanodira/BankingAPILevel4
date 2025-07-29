@@ -1,8 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using banking_api_repo.Data;
 using banking_api_repo.Interface;
 using banking_api_repo.Models.Responses;
+using banking_api_repo.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -14,21 +17,25 @@ public class AuthenticationController : ControllerBase
 {
     private readonly IAccountsService _service;
     private readonly IConfiguration _configuration;
+    private readonly UserContext _ctx;
+    private readonly UserManager<IdentityUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly AuthenticationServices _authenticationServices;
     
-    public AuthenticationController(IAccountsService service, IConfiguration configuration)
+    public AuthenticationController(IAccountsService service, IConfiguration configuration,
+        UserContext ctx, UserManager<IdentityUser> userManager,
+        RoleManager<IdentityRole> roleManager, AuthenticationServices authenticationServices,
+        SignInManager<IdentityUser> signInManager)
     {
         _service = service;
         _configuration = configuration ?? 
                          throw new ArgumentNullException(nameof(configuration));
-    }
-    
-    public class AuthenticationRequestBody
-    {
-        [Required(ErrorMessage = "Username is required to authenticate")]
-        public string UserName { get; set; }
-
-        [Required(ErrorMessage = "Password is required to authenticate.")]
-        public string Password { get; set; }
+        _ctx = ctx;
+        _userManager = userManager;
+        _roleManager = roleManager;
+        _authenticationServices = authenticationServices;
+        _signInManager = signInManager;
     }
     
     /// <summary>
@@ -36,7 +43,7 @@ public class AuthenticationController : ControllerBase
     /// </summary>
     /// <param name="authenticationRequestBody"></param>
     /// <returns></returns>
-    [HttpPost("authenticate")]
+    [HttpPost("register")]
     public ActionResult<string> Authenticate(AuthenticationRequestBody authenticationRequestBody)
     {
         var user = ValidateUserCredentials(
@@ -70,7 +77,24 @@ public class AuthenticationController : ControllerBase
 
         return Ok(tokenToReturn);
     }
+    
+    public class AuthenticationRequestBody
+    {
+        [Required(ErrorMessage = "Username is required to authenticate")]
+        public string UserName { get; set; }
 
+        [Required(ErrorMessage = "Password is required to authenticate.")]
+        public string Password { get; set; }
+
+        public Role Role;
+    }
+
+    public enum Role
+    {
+        Administrator,
+        User
+    }
+    
     private AccountDto? ValidateUserCredentials(string userName, string password)
     {
         var response = _service.FindAccountByUsername(userName);
