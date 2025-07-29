@@ -49,21 +49,6 @@ builder.Services.AddApiVersioning(setupAction =>
     setupAction.DefaultApiVersion = new ApiVersion(1, 0);
 }).AddMvc();
 
-builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new()
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Authentication:Issuer"],
-            ValidAudience = builder.Configuration["Authentication:Audience"],
-            IssuerSigningKey =
-                new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Authentication:SecretForKey"]))
-        };
-    }
-);
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
