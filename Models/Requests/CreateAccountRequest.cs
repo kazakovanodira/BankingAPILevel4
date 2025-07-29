@@ -11,6 +11,6 @@ public class CreateAccountRequest
     [Required(ErrorMessage = "Password is required.")]
     public string Password { get; set; }
 
-    public Guid AccountNumber = Guid.NewGuid();
+    public string AccountNumber;
     public decimal Balance = 0;
 }   

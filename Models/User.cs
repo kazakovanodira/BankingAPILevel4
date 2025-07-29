@@ -6,10 +6,8 @@ namespace banking_api_repo.Models;
 public class User : IdentityUser
 {
     [Required]
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; }
     [Required]
-    public Guid AccountNumber { get; set; } = Guid.Empty;
-    [Required]
-    public decimal Balance { get; set; } = 0;
+    public decimal Balance { get; set; }
 
 }

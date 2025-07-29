@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace banking_api_repo.Controllers;
 
 [ApiController]
-[Authorize]
+//[Authorize]
 [Route("api/v{version:apiVersion}/accounts")]
 [ApiVersion(1)]
 public class AccountsController : ControllerBase
@@ -38,8 +38,9 @@ public class AccountsController : ControllerBase
         {
             return StatusCode(account.HttpStatusCode, account);
         }
-        
-        return CreatedAtAction(nameof(GetAccount), new { accountNumber = account.Result.AccountId }, account);
+
+        return CreatedAtAction(nameof(GetAccount), 
+            new { accountNumber = account.Result.Id }, account);
     }
     
     /// <summary>
@@ -77,7 +78,7 @@ public class AccountsController : ControllerBase
     [HttpGet("{accountNumber}")]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAccount(Guid accountNumber)
+    public async Task<IActionResult> GetAccount(string accountNumber)
     {
         var account = await _service.GetAccount(new AccountRequest(accountNumber));
         if (!account.IsSuccess)
@@ -96,7 +97,7 @@ public class AccountsController : ControllerBase
     [HttpPost("{accountNumber}/deposits")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> MakeDeposit(Guid accountNumber,[FromBody] TransactionRequest request)
+    public async Task<IActionResult> MakeDeposit(string accountNumber,[FromBody] TransactionRequest request)
     {
         var account = await _service.MakeDeposit(new TransactionRequest()
         {
@@ -121,7 +122,7 @@ public class AccountsController : ControllerBase
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> MakeWithdrawal(Guid accountNumber,[FromBody] TransactionRequest request)
+    public async Task<IActionResult> MakeWithdrawal(string accountNumber,[FromBody] TransactionRequest request)
     {
         var account = await _service.MakeWithdraw(new TransactionRequest()
         {
@@ -170,7 +171,7 @@ public class AccountsController : ControllerBase
     [HttpGet("{accountNumber}/balances")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> CheckConvertedBalance(Guid accountNumber, [FromQuery] string currency)
+    public async Task<IActionResult> CheckConvertedBalance(string accountNumber, [FromQuery] string currency)
     {
         var response = await _service.GetConvertedBalanceAsync(
             new AccountRequest(accountNumber),

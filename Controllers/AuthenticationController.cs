@@ -60,7 +60,7 @@ public class AuthenticationController : ControllerBase
             securityKey, SecurityAlgorithms.HmacSha256);
 
         var claimsForToken = new List<Claim>();
-        claimsForToken.Add(new Claim("sub", user.AccountId.ToString()));
+        claimsForToken.Add(new Claim("sub", user.Id.ToString()));
         claimsForToken.Add(new Claim("name", user.Name));
         claimsForToken.Add(new Claim("balance", user.Balance.ToString("C")));
 

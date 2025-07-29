@@ -33,8 +33,8 @@ public class AccountRepository : IAccountRepository
         return (result, user);
     }
 
-    public async Task<User?> GetAccountById(Guid accountId) => 
-        await _userManager.Users.FirstOrDefaultAsync(u => u.AccountNumber == accountId);
+    public async Task<User?> GetAccountById(string accountId) => 
+        await _userManager.Users.FirstOrDefaultAsync(u => u.Id == accountId);
     
     public async Task<User?> GetAccountByUserName(string username) => 
         await _userManager.FindByNameAsync(username);

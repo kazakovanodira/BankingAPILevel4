@@ -35,6 +35,7 @@ public class AccountsServices : IAccountsService
                 HttpStatusCode = 409
             };
         }
+
         return new ApiResponse<AccountDto>
         {
             Result = _mapper.Map<AccountDto>(newUser),

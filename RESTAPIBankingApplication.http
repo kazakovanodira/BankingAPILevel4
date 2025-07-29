@@ -1,54 +1,24 @@
-@rootURL = http://localhost:5283
-
 ###
-POST {{rootURL}}/api/Account
-Accept: application/json
+POST http://localhost:5283/api/v1/accounts
 Content-Type: application/json
 
 {
-  "Name" : "jane"
+  "name": "test 8",
+  "username": "testnumber8",
+  "password": "StrongPassw0rd!"
 }
 
 ###
-GET {{rootURL}}/api/Account/b6a7199a-a150-4dfe-8886-925c186a1d90
-Accept: application/json
+GET http://localhost:5283/api/v1/accounts?pageNumber=1&pageSize=5
 Content-Type: application/json
+Accept: application/json
+//Accept: text/csv
 
 ###
-POST {{rootURL}}/api/Account/b6a7199a-a150-4dfe-8886-925c186a1d90/deposits
-Accept: application/json
+POST http://localhost:5283/api/v1/accounts/2c2f6cb9-2567-4460-9130-22608f9bae64/deposits
 Content-Type: application/json
 
 {
-  "Amount": "0"
+  "SenderAccId": "2c2f6cb9-2567-4460-9130-22608f9bae64",
+  "Amount": 100
 }
-
-###
-POST {{rootURL}}/api/Account/b6a7199a-a150-4dfe-8886-925c186a1d90/withdrawals
-Accept: application/json
-Content-Type: application/json
-
-{
-  "Amount": "100"
-}
-
-###
-POST {{rootURL}}/api/Account/transfers
-Accept: application/json
-Content-Type: application/json
-
-{
-  "SenderAccId": "b6a7199a-a150-4dfe-8886-925c186a1d90",
-  "ReceiverAccId": "899d68c6-2dee-41e9-a757-23fd2cc32bd5",
-  "Amount": "100"
-}
-
-###
-GET {{rootURL}}/api/Account/b6a7199a-a150-4dfe-8886-925c186a1d90/balances?currency=EUR,CAD
-Accept: application/json
-Content-Type: application/json
-
-###
-GET {{rootURL}}/api/Accounts
-Accept: application/json
-Content-Type: application/json
