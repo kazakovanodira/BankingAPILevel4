@@ -1,8 +1,10 @@
-using banking_api_repo.Models.Responses;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
 
 namespace banking_api_repo.Interface;
 
 public interface IAuthenticationServices
 {
-    Task<ApiResponse<AccountDto?>> ValidateUserCredentials(string userName, string password);
+    SecurityToken CreateSecurityToken(ClaimsIdentity identity);
+    string WriteToken(SecurityToken token);
 }
