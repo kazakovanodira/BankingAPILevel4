@@ -1,16 +1,16 @@
 using System.Text;
+using banking_api_repo.Data;
 using banking_api_repo.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace banking_api_repo;
 
-public static class WebAppBuilderExtensions
+public static class WebApplicationBuilderExtensions
 {
-    public static WebAppBuilderExtensions RegisterAuthentication()
+    public static WebApplicationBuilder RegisterAuthentication(this WebApplicationBuilder builder)
     {
-        var builder = WebApplication.CreateBuilder(args);
-
         var jwtSettings = new JwtSettings();
         builder.Configuration.Bind(nameof(JwtSettings), jwtSettings);
 
@@ -41,5 +41,11 @@ public static class WebAppBuilderExtensions
             jwt.ClaimsIssuer = jwtSettings.Issuer;
         });
 
+        builder.Services.AddIdentityCore<IdentityUser>()
+            .AddRoles<IdentityRole>()
+            .AddSignInManager()
+            .AddEntityFrameworkStores<UserContext>();
+
+        return builder;
     }
 }
