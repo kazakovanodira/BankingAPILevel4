@@ -1,7 +1,10 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using banking_api_repo.Interface;
 using banking_api_repo.Models;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace banking_api_repo.Services;
 
@@ -19,5 +22,29 @@ public class AuthenticationServices : IAuthenticationServices
         ArgumentNullException.ThrowIfNull(_settings.Audiences[0]);
         ArgumentNullException.ThrowIfNull(_settings.Issuer);
         _key = Encoding.ASCII.GetBytes(_settings?.SigningKey!);
+    }
+
+    private static JwtSecurityTokenHandler TokenHandler => new();
+
+    public SecurityToken CreateSecurityToken(ClaimsIdentity identity)
+    {
+        var tokenDescriptor = GetTokenDescriptor(identity);
+
+        return TokenHandler.CreateToken(tokenDescriptor);
+    }
+
+    public string WriteToken(SecurityToken token) => TokenHandler.WriteToken(token);
+
+    private SecurityTokenDescriptor GetTokenDescriptor(ClaimsIdentity identity)
+    {
+        return new SecurityTokenDescriptor()
+        {
+            Subject = identity,
+            Expires = DateTime.Now.AddHours(2),
+            Audience = _settings!.Audiences?[0]!,
+            Issuer = _settings.Issuer,
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_key),
+                SecurityAlgorithms.HmacSha256Signature)
+        };
     }
 }
