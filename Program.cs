@@ -32,9 +32,6 @@ builder.Services.AddHttpClient<ICurrencyServices, CurrencyService>(client =>
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddDbContext<AccountsContext>(options => 
-    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), 
-        new MySqlServerVersion(new Version(8, 0, 29))));
 builder.Services.AddDbContext<UserContext>(options => 
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), 
         new MySqlServerVersion(new Version(8, 0, 29))));
