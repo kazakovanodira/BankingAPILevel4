@@ -1,5 +1,6 @@
 using banking_api_repo.Models.Requests;
 using banking_api_repo.Models.Responses;
+using banking_api_repo.Services;
 
 namespace banking_api_repo.Interface;
 
@@ -7,6 +8,12 @@ public interface IAccountsService
 {
     Task<ApiResponse<AccountDto>> CreateAccount(CreateAccountRequest request);
     Task<ApiResponse<AccountDto>> GetAccount(AccountRequest request);
+    Task<ApiResponse<AccountDto>> FindAccountByUsername(string username);
+    Task<ApiResponse<(IEnumerable<AccountDto>, PaginationMetadata)>>  GetAccounts(string? name, 
+        int pageNumber, 
+        int pageSize,
+        string? orderBy,
+        bool descending);
     Task<ApiResponse<BalanceResponse>> MakeDeposit(TransactionRequest request);
     Task<ApiResponse<BalanceResponse>> MakeWithdraw(TransactionRequest request);
     Task<ApiResponse<BalanceResponse>> MakeTransfer(TransactionRequest request);

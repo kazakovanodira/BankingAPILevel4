@@ -1,5 +1,6 @@
+using AutoMapper;
 using banking_api_repo.Interface;
-using banking_api_repo.Mapper;
+using banking_api_repo.Models;
 using banking_api_repo.Models.Requests;
 using banking_api_repo.Models.Responses;
 
@@ -9,21 +10,52 @@ public class AccountsServices : IAccountsService
 {
     private readonly IAccountRepository _accountRepository;
     private readonly ICurrencyServices _currencyServices;
+    private readonly IMapper _mapper;
 
-    public AccountsServices(IAccountRepository accountRepository, ICurrencyServices currencyServices)
+    public AccountsServices(
+        IAccountRepository accountRepository, 
+        ICurrencyServices currencyServices, 
+        IMapper mapper)
     {
         _accountRepository = accountRepository;
         _currencyServices = currencyServices;
+        _mapper = mapper;
     }
     
     public async Task<ApiResponse<AccountDto>> CreateAccount(CreateAccountRequest request)
     {
-        var newAccount = new AccountDto(Guid.NewGuid(), request.Name, 0);
-        
+        var user = _mapper.Map<User>(request);
+        var (result, newUser) = await _accountRepository.AddAccount(user, request.Password);
+        if (!result.Succeeded)
+        {
+            var errorMessage = string.Join(", ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+            return new ApiResponse<AccountDto>
+            {
+                ErrorMessage = errorMessage,
+                HttpStatusCode = 409
+            };
+        }
         return new ApiResponse<AccountDto>
         {
-            Result = ManualMapper.ConvertToDto(await _accountRepository.AddAccount(newAccount)),
+            Result = _mapper.Map<AccountDto>(newUser),
             HttpStatusCode = 201
+        };
+    }
+    
+    public async Task<ApiResponse<(IEnumerable<AccountDto>, PaginationMetadata)>> GetAccounts(string? name, 
+        int pageNumber, 
+        int pageSize,
+        string? orderBy,
+        bool descending)
+    {
+        var (accounts, paginationMetadata) = await _accountRepository.GetAccountsAsync(name, pageNumber, pageSize, orderBy, descending);
+
+        var accountDtos = _mapper.Map<IEnumerable<AccountDto>>(accounts);
+        
+        return new ApiResponse<(IEnumerable<AccountDto>, PaginationMetadata)>
+        {
+            Result = (accountDtos, paginationMetadata),
+            HttpStatusCode = 200
         };
     }
 
@@ -42,7 +74,27 @@ public class AccountsServices : IAccountsService
         
         return new ApiResponse<AccountDto>
         {
-            Result = ManualMapper.ConvertToDto(account),
+            Result = _mapper.Map<AccountDto>(account),
+            HttpStatusCode = 200
+        };
+    }
+    
+    public async Task<ApiResponse<AccountDto>> FindAccountByUsername(string username)
+    {
+        var account = await _accountRepository.GetAccountByUserName(username);
+        
+        if (account is null)
+        {
+            return new ApiResponse<AccountDto>
+            {
+                ErrorMessage = "Account not found.",
+                HttpStatusCode = 404
+            };
+        }
+        
+        return new ApiResponse<AccountDto>
+        {
+            Result = _mapper.Map<AccountDto>(account),
             HttpStatusCode = 200
         };
     }

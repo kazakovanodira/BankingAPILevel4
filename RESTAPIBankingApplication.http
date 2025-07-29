@@ -48,3 +48,7 @@ GET {{rootURL}}/api/Account/b6a7199a-a150-4dfe-8886-925c186a1d90/balances?curren
 Accept: application/json
 Content-Type: application/json
 
+###
+GET {{rootURL}}/api/Accounts
+Accept: application/json
+Content-Type: application/json
