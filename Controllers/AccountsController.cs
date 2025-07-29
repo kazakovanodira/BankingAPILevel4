@@ -3,11 +3,13 @@ using Asp.Versioning;
 using banking_api_repo.Interface;
 using banking_api_repo.Models.Requests;
 using banking_api_repo.Models.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace banking_api_repo.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/v{version:apiVersion}/accounts")]
 [ApiVersion(1)]
 public class AccountsController : ControllerBase
