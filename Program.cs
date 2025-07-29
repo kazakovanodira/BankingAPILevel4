@@ -1,10 +1,7 @@
 using Asp.Versioning;
-using AutoMapper;
 using banking_api_repo.Data;
 using banking_api_repo.Interface;
 using banking_api_repo.Models;
-using banking_api_repo.Models.Requests;
-using banking_api_repo.Models.Responses;
 using banking_api_repo.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -22,13 +19,7 @@ builder.Services.AddControllers(options =>
     options.RespectBrowserAcceptHeader = true;
     options.OutputFormatters.Add(new CsvOutputFormatter());
 });
-builder.Services.AddAutoMapper(options =>
-{
-    options.CreateMap<CreateAccountRequest, User>();
-    options.CreateMap<User, AccountDto>();
-    options.CreateMap<Account, AccountDto>();
-    options.CreateMap<IEnumerable<User>, IEnumerable<AccountDto>>();
-});
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IAccountsService, AccountsServices>();
 builder.Services.AddScoped<ICurrencyServices, CurrencyService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();

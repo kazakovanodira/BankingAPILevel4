@@ -8,7 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
-        <PackageReference Include="AutoMapper" Version="15.0.1" />
+        <PackageReference Include="AutoMapper" Version="14.0.0" />
         <PackageReference Include="CsvHelper" Version="33.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.6" />
@@ -27,10 +27,6 @@
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0-preview.3.efcore.9.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.1" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.1" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Profiles\" />
     </ItemGroup>
 
 </Project>
