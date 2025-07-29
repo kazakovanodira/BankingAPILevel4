@@ -13,4 +13,11 @@ public class CreateAccountRequest
 
     public string AccountNumber;
     public decimal Balance = 0;
-}   
+    public Role Role;
+}
+
+public enum Role
+{
+    Administrator, 
+    User
+}

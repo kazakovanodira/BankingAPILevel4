@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using banking_api_repo;
 using banking_api_repo.Data;
 using banking_api_repo.Interface;
 using banking_api_repo.Models;
@@ -10,8 +11,8 @@ using banking_api_repo.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
-var builder = WebApplication.CreateBuilder(args);
-
+var builder = WebApplication.CreateBuilder(args).RegisterAuthentication();
+;
 // Add services to the container.
 builder.Services.AddControllers(options =>
 {
@@ -19,6 +20,7 @@ builder.Services.AddControllers(options =>
     options.RespectBrowserAcceptHeader = true;
     options.OutputFormatters.Add(new CsvOutputFormatter());
 });
+builder.Services.AddScoped<IAuthenticationServices, AuthenticationServices>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IAccountsService, AccountsServices>();
 builder.Services.AddScoped<ICurrencyServices, CurrencyService>();
@@ -48,7 +50,6 @@ builder.Services.AddApiVersioning(setupAction =>
     setupAction.AssumeDefaultVersionWhenUnspecified = true;
     setupAction.DefaultApiVersion = new ApiVersion(1, 0);
 }).AddMvc();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

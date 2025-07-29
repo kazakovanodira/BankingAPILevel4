@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace banking_api_repo.Controllers;
 
 [ApiController]
-//[Authorize]
 [Route("api/v{version:apiVersion}/accounts")]
 [ApiVersion(1)]
+[Authorize]
 public class AccountsController : ControllerBase
 {
     private readonly IAccountsService _service;
@@ -51,6 +51,7 @@ public class AccountsController : ControllerBase
     /// <param name="pageSize">The size of the page.</param>
     /// <returns>The list of accounts with the specified name or the list of all accounts.</returns>
     [HttpGet]
+    [Authorize(Roles = "Administrator")]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAccounts(string? name, 
         int pageNumber = 1, 
@@ -76,6 +77,7 @@ public class AccountsController : ControllerBase
     /// <param name="accountNumber">The unique identifier of the account.</param>
     /// <returns>The account details.</returns>
     [HttpGet("{accountNumber}")]
+    [Authorize(Roles = "Administrator")]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAccount(string accountNumber)
@@ -95,6 +97,7 @@ public class AccountsController : ControllerBase
     /// <param name="request">The deposit request containing the deposit amount.</param>
     /// <returns>The updated balance.</returns>
     [HttpPost("{accountNumber}/deposits")]
+    [Authorize(Roles = "administrator, User")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> MakeDeposit(string accountNumber,[FromBody] TransactionRequest request)
@@ -119,6 +122,7 @@ public class AccountsController : ControllerBase
     /// <param name="request">The withdrawal request containing the withdrawal amount.</param>
     /// <returns>The updated balance.</returns>
     [HttpPost("{accountNumber}/withdrawals")]
+    [Authorize(Roles = "administrator, User")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
@@ -143,6 +147,7 @@ public class AccountsController : ControllerBase
     /// <param name="request">The transfer request containing sender, receiver, and transfer amount.</param>
     /// <returns>The updated sender balance.</returns>
     [HttpPost("transfers")]
+    [Authorize(Roles = "administrator, User")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
@@ -169,6 +174,7 @@ public class AccountsController : ControllerBase
     /// <param name="currency">The currencies to convert the balance to.</param>
     /// <returns>The list of the converted balance.</returns>
     [HttpGet("{accountNumber}/balances")]
+    [Authorize(Roles = "administrator, User")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CheckConvertedBalance(string accountNumber, [FromQuery] string currency)

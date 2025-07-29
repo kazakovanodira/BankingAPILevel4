@@ -1,13 +1,12 @@
-using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using banking_api_repo.Data;
 using banking_api_repo.Interface;
-using banking_api_repo.Models.Responses;
+using banking_api_repo.Models;
+using banking_api_repo.Models.Requests;
 using banking_api_repo.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace banking_api_repo.Controllers;
 
@@ -18,15 +17,15 @@ public class AuthenticationController : ControllerBase
     private readonly IAccountsService _service;
     private readonly IConfiguration _configuration;
     private readonly UserContext _ctx;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly SignInManager<IdentityUser> _signInManager;
-    private readonly AuthenticationServices _authenticationServices;
+    private readonly SignInManager<User> _signInManager;
+    private readonly IAuthenticationServices _authenticationServices;
     
     public AuthenticationController(IAccountsService service, IConfiguration configuration,
-        UserContext ctx, UserManager<IdentityUser> userManager,
-        RoleManager<IdentityRole> roleManager, AuthenticationServices authenticationServices,
-        SignInManager<IdentityUser> signInManager)
+        UserContext ctx, UserManager<User> userManager,
+        RoleManager<IdentityRole> roleManager, IAuthenticationServices authenticationServices,
+        SignInManager<User> signInManager)
     {
         _service = service;
         _configuration = configuration ?? 
@@ -37,72 +36,107 @@ public class AuthenticationController : ControllerBase
         _authenticationServices = authenticationServices;
         _signInManager = signInManager;
     }
-    
+
     /// <summary>
     /// 
     /// </summary>
     /// <param name="authenticationRequestBody"></param>
     /// <returns></returns>
     [HttpPost("register")]
-    public ActionResult<string> Authenticate(AuthenticationRequestBody authenticationRequestBody)
+    public async Task<IActionResult> Register([FromBody] CreateAccountRequest request)
     {
-        var user = ValidateUserCredentials(
-            authenticationRequestBody.UserName, 
-            authenticationRequestBody.Password);
-
-        if (user is null)
+        var account = await _service.CreateAccount(request);
+        var identity = new User { UserName = request.Username };
+        var newClaims = new List<Claim>
         {
-            return Unauthorized();
+            new("Name", request.Name)
+        };
+
+        await _userManager.AddClaimsAsync(identity, newClaims);
+
+        if (request.Role is Role.Administrator)
+        {
+            var role = await _roleManager.FindByNameAsync("Administrator");
+            if (role is null)
+            {
+                role = new IdentityRole("Administrator");
+                await _roleManager.CreateAsync(role);
+            }
+
+            await _userManager.AddToRoleAsync(identity, "Administrator");
+            
+            newClaims.Add(new Claim(ClaimTypes.Role, "Administrator"));
+        }
+        else
+        {
+            var role = await _roleManager.FindByNameAsync("User");
+            if (role is null)
+            {
+                role = new IdentityRole("User");
+                await _roleManager.CreateAsync(role);
+            }
+
+            await _userManager.AddToRoleAsync(identity, "User");
+            
+            newClaims.Add(new Claim(ClaimTypes.Role, "User"));
         }
 
-        var securityKey = new SymmetricSecurityKey(
-                Convert.FromBase64String(_configuration["Authentication:SecretForKey"]));
-        var signingCredentials = new SigningCredentials(
-            securityKey, SecurityAlgorithms.HmacSha256);
-
-        var claimsForToken = new List<Claim>();
-        claimsForToken.Add(new Claim("sub", user.Id.ToString()));
-        claimsForToken.Add(new Claim("name", user.Name));
-        claimsForToken.Add(new Claim("balance", user.Balance.ToString("C")));
-
-        var jwtSecurityToken = new JwtSecurityToken(
-            _configuration["Authentication:Issuer"],
-            _configuration["Authentication:Audience"],
-            claimsForToken,
-            DateTime.UtcNow,
-            DateTime.UtcNow.AddHours(1),
-            signingCredentials);
-
-        var tokenToReturn = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
-
-        return Ok(tokenToReturn);
-    }
-    
-    public class AuthenticationRequestBody
-    {
-        [Required(ErrorMessage = "Username is required to authenticate")]
-        public string UserName { get; set; }
-
-        [Required(ErrorMessage = "Password is required to authenticate.")]
-        public string Password { get; set; }
-
-        public Role Role;
-    }
-
-    public enum Role
-    {
-        Administrator,
-        User
-    }
-    
-    private AccountDto? ValidateUserCredentials(string userName, string password)
-    {
-        var response = _service.FindAccountByUsername(userName);
-        if (response.Result.IsSuccess)
+        var claimsIdentity = new ClaimsIdentity(new Claim[]
         {
-            return response.Result.Result;
-        }
+            new(JwtRegisteredClaimNames.Sub, identity.UserName ?? throw new InvalidOperationException()),
+            new(JwtRegisteredClaimNames.Email, identity.UserName ?? throw new InvalidOperationException())
+        });
         
-        return null;
+        claimsIdentity.AddClaims(newClaims);
+
+        var token = _authenticationServices.CreateSecurityToken(claimsIdentity);
+        //var response = new AuthenticationResult(_authenticationServices.WriteToken(token));
+        return Ok(token);
+
+        /*if (!account.IsSuccess)
+        {
+            return StatusCode(account.HttpStatusCode, account);
+        }
+
+        return CreatedAtAction(nameof(GetAccount),
+            new { accountNumber = account.Result.Id }, account);*/
+    }
+
+    [HttpPost]
+    [Route("login")]
+    public async Task<IActionResult> Login(LoginUser login)
+    {
+        var account = await _userManager.FindByNameAsync(login.Username);
+        if (account is null) return BadRequest();
+
+        var result = await _signInManager.CheckPasswordSignInAsync(account, login.Password, false);
+        if (!result.Succeeded) return BadRequest("Couldn't sign in.");
+
+        var claims = await _userManager.GetClaimsAsync(account);
+
+        var roles = await _userManager.GetRolesAsync(account);
+        
+        var claimsIdentity = new ClaimsIdentity(new Claim[]
+        {
+            new(JwtRegisteredClaimNames.Sub, account.UserName ?? throw new InvalidOperationException()),
+            new(JwtRegisteredClaimNames.Email, account.UserName ?? throw new InvalidOperationException())
+        });
+        
+        claimsIdentity.AddClaims(claims);
+
+        foreach (var role in roles)
+        {
+            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role));
+        }
+
+        var token = _authenticationServices.CreateSecurityToken(claimsIdentity);
+        //var response = new AuthenticationResult(_authenticationServices.WriteToken(token));
+        return Ok(token);
+    }
+
+    public class LoginUser
+    {
+        public string Username;
+        public string Password;
     }
 }
