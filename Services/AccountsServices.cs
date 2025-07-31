@@ -25,20 +25,19 @@ public class AccountsServices : IAccountsService
     public async Task<ApiResponse<AccountDto>> CreateAccount(CreateAccountRequest request)
     {
         var user = _mapper.Map<User>(request);
-        var (result, newUser) = await _accountRepository.AddAccount(user, request.Password);
-        if (!result.Succeeded)
+
+        if (await _accountRepository.GetAccountByUserName(user.Username) != null)
         {
-            var errorMessage = string.Join(", ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
             return new ApiResponse<AccountDto>
             {
-                ErrorMessage = errorMessage,
+                ErrorMessage = "Account with this username already exists.",
                 HttpStatusCode = 409
             };
         }
-
+        
         return new ApiResponse<AccountDto>
         {
-            Result = _mapper.Map<AccountDto>(newUser),
+            Result = _mapper.Map<AccountDto>(await _accountRepository.AddAccount(user)),
             HttpStatusCode = 201
         };
     }
