@@ -1,8 +1,7 @@
 using banking_api_repo.Data;
-using banking_api_repo.Interface;
+using banking_api_repo.Interfaces;
 using banking_api_repo.Models;
 using banking_api_repo.Services;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace banking_api_repo.Repositories;
