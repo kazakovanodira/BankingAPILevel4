@@ -10,17 +10,15 @@ namespace banking_api_repo.Repositories;
 public class AccountRepository : IAccountRepository
 {
     private readonly UserContext _context;
-    private readonly UserManager<User> _userManager;
 
-    public AccountRepository(UserContext context, UserManager<User> userManager)
+    public AccountRepository(UserContext context)
     {
         _context = context;
-        _userManager = userManager;
     }
     
     public async Task<(IdentityResult, User)> AddAccount(User user, string password)
     {
-        var result = await _userManager.CreateAsync(user, password);
+        var result = await _context.CreateAsync(user, password);
         await _context.SaveChangesAsync();
         return (result, user);
     }
