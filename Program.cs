@@ -7,7 +7,7 @@ using banking_api_repo.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using banking_api_repo.Services;
-using banking_api_repo.Utils;
+using banking_api_repo.Formatters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 

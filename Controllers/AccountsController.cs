@@ -53,7 +53,7 @@ public class AccountsController : ControllerBase
     [HttpGet]
     [Authorize(Roles = "Administrator")]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAccounts(string? name, 
+    public async Task<IActionResult> GetAccounts([FromQuery]string? name, 
         int pageNumber = 1, 
         int pageSize = 5,
         string? orderBy = "Name",

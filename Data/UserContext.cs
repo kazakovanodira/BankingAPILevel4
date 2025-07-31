@@ -14,13 +14,5 @@ public class UserContext : IdentityDbContext<User>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<IdentityUser>().Ignore(c => c.Email);
-        modelBuilder.Entity<IdentityUser>().Ignore(c => c.EmailConfirmed);
-        modelBuilder.Entity<IdentityUser>().Ignore(c => c.NormalizedEmail);
-        modelBuilder.Entity<IdentityUser>().Ignore(c => c.PhoneNumber);
-        modelBuilder.Entity<IdentityUser>().Ignore(c => c.PhoneNumberConfirmed);
-        modelBuilder.Entity<IdentityUser>().Ignore(c => c.TwoFactorEnabled);
-        modelBuilder.Entity<IdentityUser>().Ignore(c => c.NormalizedUserName);
     }
 }

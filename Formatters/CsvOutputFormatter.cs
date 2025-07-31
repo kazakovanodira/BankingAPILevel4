@@ -5,7 +5,7 @@ using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 
-namespace banking_api_repo.Utils;
+namespace banking_api_repo.Formatters;
 
 public class CsvOutputFormatter : TextOutputFormatter
 {

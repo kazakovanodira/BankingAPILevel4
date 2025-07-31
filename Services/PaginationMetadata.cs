@@ -1,5 +1,3 @@
-using Azure;
-
 namespace banking_api_repo.Services;
 
 public class PaginationMetadata
