@@ -1,6 +1,6 @@
 using banking_api_repo.Models.Requests;
 
-namespace banking_api_repo.Interface;
+namespace banking_api_repo.Interfaces;
 
 public interface ICurrencyServices
 {

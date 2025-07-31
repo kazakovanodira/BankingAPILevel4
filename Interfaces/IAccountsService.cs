@@ -2,7 +2,7 @@ using banking_api_repo.Models.Requests;
 using banking_api_repo.Models.Responses;
 using banking_api_repo.Services;
 
-namespace banking_api_repo.Interface;
+namespace banking_api_repo.Interfaces;
 
 public interface IAccountsService
 {
