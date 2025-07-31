@@ -16,29 +16,28 @@ public class AccountRepository : IAccountRepository
         _context = context;
     }
     
-    public async Task<(IdentityResult, User)> AddAccount(User user, string password)
+    public async Task<User> AddAccount(User user)
     {
-        var result = await _context.CreateAsync(user, password);
+        _context.Users.Add(user);
         await _context.SaveChangesAsync();
-        return (result, user);
+        return user;
     }
 
-    public async Task<(IdentityResult, User)> UpdateAccount(User user, decimal amount)
+    public async Task<User?> UpdateAccount(User user, decimal amount)
     {
         user.Balance += amount;
-        var result = await _userManager.UpdateAsync(user);
         await _context.SaveChangesAsync();
-        return (result, user);
+        return user;
     }
 
-    public async Task<User?> GetAccountById(string accountId) => 
-        await _userManager.Users.FirstOrDefaultAsync(u => u.Id == accountId);
+    public async Task<User?> GetAccountByAccountNumber(Guid accountNumber) => 
+        await _context.Users.FirstOrDefaultAsync(u => u.AccountNumber == accountNumber);
     
     public async Task<User?> GetAccountByUserName(string username) => 
-        await _userManager.FindByNameAsync(username);
+        await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
     
     public async Task<IEnumerable<User>> GetAccountsAsync() =>
-        await _userManager.Users.OrderBy(u => u.Name).ToListAsync();
+        await _context.Users.OrderBy(u => u.Name).ToListAsync();
     
 
     public async Task<(IEnumerable<User>, PaginationMetadata)> GetAccountsAsync(string? name, 
@@ -47,7 +46,7 @@ public class AccountRepository : IAccountRepository
         string? orderBy,
         bool descending)
     {
-        var accountsCollection = _userManager.Users;
+        var accountsCollection = _context.Users as IQueryable<User>;
 
         if (!string.IsNullOrEmpty(name))
         {

@@ -6,9 +6,9 @@ namespace banking_api_repo.Interface;
 
 public interface IAccountRepository
 {
-    Task<(IdentityResult, User)> AddAccount(User user, string password);
-    Task<(IdentityResult, User)> UpdateAccount(User user, decimal amount);
-    Task<User?> GetAccountById(string accountId);
+    Task<User> AddAccount(User user);
+    Task<User?> UpdateAccount(User user, decimal amount);
+    Task<User?> GetAccountByAccountNumber(Guid AccountNumber);
     Task<User?> GetAccountByUserName(string username);
     Task<IEnumerable<User>> GetAccountsAsync();
     Task<(IEnumerable<User>, PaginationMetadata)> GetAccountsAsync(string? name, 

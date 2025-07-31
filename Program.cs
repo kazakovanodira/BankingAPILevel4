@@ -37,8 +37,6 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<UserContext>(options => 
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), 
         new MySqlServerVersion(new Version(8, 0, 29))));
-builder.Services.AddIdentity<User, IdentityRole>()
-    .AddEntityFrameworkStores<UserContext>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
