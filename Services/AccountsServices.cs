@@ -1,4 +1,5 @@
 using AutoMapper;
+using banking_api_repo.Hasher;
 using banking_api_repo.Interfaces;
 using banking_api_repo.Models;
 using banking_api_repo.Models.Requests;
@@ -24,6 +25,8 @@ public class AccountsServices : IAccountsService
     
     public async Task<ApiResponse<AccountDto>> CreateAccount(CreateAccountRequest request)
     {
+        request.Password = Md5Hasher.ComputeHash(request.Password);
+        
         var user = _mapper.Map<User>(request);
 
         if (await _accountRepository.GetAccountByUserName(user.Username) != null)
@@ -61,7 +64,7 @@ public class AccountsServices : IAccountsService
 
     public async Task<ApiResponse<AccountDto>> GetAccount(AccountRequest request)
     {
-        var account = await _accountRepository.GetAccountById(request.AccountId);
+        var account = await _accountRepository.GetAccountByAccountNumber(request.AccountNumber);
         
         if (account is null)
         {
@@ -98,10 +101,42 @@ public class AccountsServices : IAccountsService
             HttpStatusCode = 200
         };
     }
+    
+    public async Task<ApiResponse<AccountDto>> CheckIfPasswordsMatchesUsername(LoginRequest loginDetails)
+    {
+        loginDetails.Password = Md5Hasher.ComputeHash(loginDetails.Password);
+
+        var account = await _accountRepository.GetAccountByUserName(loginDetails.Username);
+        
+        if (account is null)
+        {
+            return new ApiResponse<AccountDto>
+            {
+                ErrorMessage = "Account not found.",
+                HttpStatusCode = 404
+            };
+        }
+
+        if (account.Password != loginDetails.Password)
+        {
+            return new ApiResponse<AccountDto>
+            {
+                ErrorMessage = "Password doesn't match the username.",
+                HttpStatusCode = 401
+            };
+        }
+        
+        return new ApiResponse<AccountDto>
+        {
+            Result = _mapper.Map<AccountDto>(account),
+            HttpStatusCode = 200
+        };
+    }
+
 
     public async Task<ApiResponse<BalanceResponse>> MakeDeposit(TransactionRequest request)
     {
-        var account = await _accountRepository.GetAccountById(request.SenderAccId);
+        var account = await _accountRepository.GetAccountByAccountNumber(request.SenderAccountNumber);
 
         if (account is null)
         {
@@ -123,7 +158,7 @@ public class AccountsServices : IAccountsService
 
     public async Task<ApiResponse<BalanceResponse>> MakeWithdraw(TransactionRequest request)
     {
-        var account = await _accountRepository.GetAccountById(request.SenderAccId);
+        var account = await _accountRepository.GetAccountByAccountNumber(request.SenderAccountNumber);
 
         if (account is null)
         {
@@ -154,9 +189,9 @@ public class AccountsServices : IAccountsService
 
     public async Task<ApiResponse<BalanceResponse>> MakeTransfer(TransactionRequest request)
     {
-        var sender = await _accountRepository.GetAccountById(request.SenderAccId);
+        var sender = await _accountRepository.GetAccountByAccountNumber(request.SenderAccountNumber);
         
-        var receiver = await _accountRepository.GetAccountById(request.ReceiverAccId);
+        var receiver = await _accountRepository.GetAccountByAccountNumber(request.ReceiverAccountNumber);
 
         if (sender is null || receiver is null)
         {
@@ -188,7 +223,8 @@ public class AccountsServices : IAccountsService
 
     public async Task<ApiResponse<ConvertedBalances>> GetConvertedBalanceAsync(AccountRequest accountRequest, CurrencyRequest currencyRequest)
     {
-        var account = await _accountRepository.GetAccountById(accountRequest.AccountId);
+        var account = await _accountRepository.GetAccountByAccountNumber(accountRequest.AccountNumber);
+        
         if (account is null)
         {
             return new ApiResponse<ConvertedBalances>

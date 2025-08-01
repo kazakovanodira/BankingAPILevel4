@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Asp.Versioning;
-using banking_api_repo.Interface;
+using banking_api_repo.Interfaces;
 using banking_api_repo.Models.Requests;
 using banking_api_repo.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
@@ -23,27 +23,6 @@ public class AccountsController : ControllerBase
     }
     
     /// <summary>
-    /// Creates a new bank account with the specified account holder name.
-    /// </summary>
-    /// <param name="request">Contains the account holder's name.</param>
-    /// <returns>The created account details.</returns>
-    [HttpPost]
-    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateNewAccount([FromBody] CreateAccountRequest request)
-    {
-        var account = await _service.CreateAccount(request);
-        
-        if (!account.IsSuccess)
-        {
-            return StatusCode(account.HttpStatusCode, account);
-        }
-
-        return CreatedAtAction(nameof(GetAccount), 
-            new { accountNumber = account.Result.Id }, account);
-    }
-    
-    /// <summary>
     /// Retrieves accounts with the specified name or the list of all accounts otherwise.
     /// </summary>
     /// <param name="name">The name to retrieve accounts by.</param>
@@ -51,7 +30,7 @@ public class AccountsController : ControllerBase
     /// <param name="pageSize">The size of the page.</param>
     /// <returns>The list of accounts with the specified name or the list of all accounts.</returns>
     [HttpGet]
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAccounts([FromQuery]string? name, 
         int pageNumber = 1, 
@@ -77,10 +56,10 @@ public class AccountsController : ControllerBase
     /// <param name="accountNumber">The unique identifier of the account.</param>
     /// <returns>The account details.</returns>
     [HttpGet("{accountNumber}")]
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAccount(string accountNumber)
+    public async Task<IActionResult> GetAccount(Guid accountNumber)
     {
         var account = await _service.GetAccount(new AccountRequest(accountNumber));
         if (!account.IsSuccess)
@@ -97,14 +76,14 @@ public class AccountsController : ControllerBase
     /// <param name="request">The deposit request containing the deposit amount.</param>
     /// <returns>The updated balance.</returns>
     [HttpPost("{accountNumber}/deposits")]
-    [Authorize(Roles = "administrator, User")]
+    [Authorize(Roles = "Admin, User")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> MakeDeposit(string accountNumber,[FromBody] TransactionRequest request)
+    public async Task<IActionResult> MakeDeposit(Guid accountNumber,[FromBody] TransactionRequest request)
     {
         var account = await _service.MakeDeposit(new TransactionRequest()
         {
-            SenderAccId = accountNumber,
+            SenderAccountNumber = accountNumber,
             Amount = request.Amount,
         });
         
@@ -122,15 +101,15 @@ public class AccountsController : ControllerBase
     /// <param name="request">The withdrawal request containing the withdrawal amount.</param>
     /// <returns>The updated balance.</returns>
     [HttpPost("{accountNumber}/withdrawals")]
-    [Authorize(Roles = "administrator, User")]
+    [Authorize(Roles = "Admin, User")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> MakeWithdrawal(string accountNumber,[FromBody] TransactionRequest request)
+    public async Task<IActionResult> MakeWithdrawal(Guid accountNumber,[FromBody] TransactionRequest request)
     {
         var account = await _service.MakeWithdraw(new TransactionRequest()
         {
-            SenderAccId = accountNumber,
+            SenderAccountNumber = accountNumber,
             Amount = request.Amount,
         });
         
@@ -147,7 +126,7 @@ public class AccountsController : ControllerBase
     /// <param name="request">The transfer request containing sender, receiver, and transfer amount.</param>
     /// <returns>The updated sender balance.</returns>
     [HttpPost("transfers")]
-    [Authorize(Roles = "administrator, User")]
+    [Authorize(Roles = "Admin, User")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
@@ -155,8 +134,8 @@ public class AccountsController : ControllerBase
     {
         var account = await _service.MakeTransfer(new TransactionRequest()
         {
-            SenderAccId = request.SenderAccId,
-            ReceiverAccId = request.ReceiverAccId,
+            SenderAccountNumber = request.SenderAccountNumber,
+            ReceiverAccountNumber = request.ReceiverAccountNumber,
             Amount = request.Amount,
         });
         
@@ -174,10 +153,10 @@ public class AccountsController : ControllerBase
     /// <param name="currency">The currencies to convert the balance to.</param>
     /// <returns>The list of the converted balance.</returns>
     [HttpGet("{accountNumber}/balances")]
-    [Authorize(Roles = "administrator, User")]
+    [Authorize(Roles = "Admin, User")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> CheckConvertedBalance(string accountNumber, [FromQuery] string currency)
+    public async Task<IActionResult> CheckConvertedBalance(Guid accountNumber, [FromQuery] string currency)
     {
         var response = await _service.GetConvertedBalanceAsync(
             new AccountRequest(accountNumber),

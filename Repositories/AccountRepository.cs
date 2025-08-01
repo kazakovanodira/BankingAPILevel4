@@ -29,12 +29,12 @@ public class AccountRepository : IAccountRepository
         return user;
     }
 
-    public async Task<User?> GetAccountByAccountNumber(Guid accountNumber) => 
+    public async Task<User?> GetAccountByAccountNumber(Guid? accountNumber) =>
         await _context.Users.FirstOrDefaultAsync(u => u.AccountNumber == accountNumber);
-    
-    public async Task<User?> GetAccountByUserName(string username) => 
+        
+    public async Task<User?> GetAccountByUserName(string username) =>
         await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-    
+        
     public async Task<IEnumerable<User>> GetAccountsAsync() =>
         await _context.Users.OrderBy(u => u.Name).ToListAsync();
     

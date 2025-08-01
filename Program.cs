@@ -1,13 +1,13 @@
 using Asp.Versioning;
 using banking_api_repo;
 using banking_api_repo.Data;
-using banking_api_repo.Interface;
 using banking_api_repo.Models;
 using banking_api_repo.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using banking_api_repo.Services;
 using banking_api_repo.Formatters;
+using banking_api_repo.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 

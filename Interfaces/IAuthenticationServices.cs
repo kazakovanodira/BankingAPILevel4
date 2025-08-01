@@ -5,6 +5,5 @@ namespace banking_api_repo.Interfaces;
 
 public interface IAuthenticationServices
 {
-    SecurityToken CreateSecurityToken(ClaimsIdentity identity);
-    string WriteToken(SecurityToken token);
+    string CreateSecurityToken(ClaimsIdentity identity);
 }

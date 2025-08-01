@@ -1,3 +1,3 @@
 namespace banking_api_repo.Models.Requests;
 
-public record AccountRequest(string AccountId);
+public record AccountRequest(Guid AccountNumber);
