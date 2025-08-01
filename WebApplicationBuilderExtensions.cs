@@ -39,6 +39,23 @@ public static class WebApplicationBuilderExtensions
             };
             jwt.Audience = jwtSettings.Audiences?[0];
             jwt.ClaimsIssuer = jwtSettings.Issuer;
+            
+            jwt.Events = new JwtBearerEvents
+            {
+                OnChallenge = context =>
+                {
+                    context.HandleResponse();
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    context.Response.ContentType = "application/json";
+                    return context.Response.WriteAsync("{\"error\": \"Authentication required.\"}");
+                },
+                OnForbidden = context =>
+                {
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    context.Response.ContentType = "application/json";
+                    return context.Response.WriteAsync("{\"error\": \"You do not have permission to access this resource.\"}");
+                }
+            };
         });
 
         builder.Services.AddIdentityCore<IdentityUser>()

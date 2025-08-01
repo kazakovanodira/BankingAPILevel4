@@ -68,7 +68,7 @@ public class AuthenticationController : ControllerBase
             var token = _authenticationServices.CreateSecurityToken(claimsIdentity);
             return Ok(token);
         }
-
+        
         return Ok(account);
     }
 }

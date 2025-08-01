@@ -16,10 +16,10 @@ Accept: application/json
 //Accept: text/csv
 
 ###
-POST http://localhost:5283/api/v1/accounts/2c2f6cb9-2567-4460-9130-22608f9bae64/deposits
+POST http://localhost:5283/api/v1/accounts/de51563a-3d0d-488e-9f99-ee250bb6fd2b/deposits
 Content-Type: application/json
 
 {
-  "SenderAccId": "2c2f6cb9-2567-4460-9130-22608f9bae64",
+  "SenderAccId": "de51563a-3d0d-488e-9f99-ee250bb6fd2b",
   "Amount": 100
 }

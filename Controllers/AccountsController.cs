@@ -56,7 +56,7 @@ public class AccountsController : ControllerBase
     /// <param name="accountNumber">The unique identifier of the account.</param>
     /// <returns>The account details.</returns>
     [HttpGet("{accountNumber}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, User")]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAccount(Guid accountNumber)
