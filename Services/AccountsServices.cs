@@ -102,7 +102,7 @@ public class AccountsServices : IAccountsService
         };
     }
     
-    public async Task<ApiResponse<AccountDto>> CheckIfPasswordsMatchesUsername(LoginRequest loginDetails)
+    public async Task<ApiResponse<LoginResponse>> CheckIfPasswordsMatchesUsername(LoginRequest loginDetails)
     {
         loginDetails.Password = Md5Hasher.ComputeHash(loginDetails.Password);
 
@@ -110,7 +110,7 @@ public class AccountsServices : IAccountsService
         
         if (account is null)
         {
-            return new ApiResponse<AccountDto>
+            return new ApiResponse<LoginResponse>
             {
                 ErrorMessage = "Account not found.",
                 HttpStatusCode = 404
@@ -119,16 +119,16 @@ public class AccountsServices : IAccountsService
 
         if (account.Password != loginDetails.Password)
         {
-            return new ApiResponse<AccountDto>
+            return new ApiResponse<LoginResponse>
             {
                 ErrorMessage = "Password doesn't match the username.",
                 HttpStatusCode = 401
             };
         }
         
-        return new ApiResponse<AccountDto>
+        return new ApiResponse<LoginResponse>
         {
-            Result = _mapper.Map<AccountDto>(account),
+            Result = _mapper.Map<LoginResponse>(account),
             HttpStatusCode = 200
         };
     }

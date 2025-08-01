@@ -2,9 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using banking_api_repo.Interfaces;
 using banking_api_repo.Models.Requests;
-using banking_api_repo.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Client;
 
 namespace banking_api_repo.Controllers;
 
@@ -45,28 +43,12 @@ public class AuthenticationController : ControllerBase
         {
             newClaims.Add(new Claim(ClaimTypes.Role, "User"));
         }
-
-        var claims = new List<Claim>
-        {
-            new(JwtRegisteredClaimNames.Sub, account.Result.Name ?? throw new InvalidOperationException()),
-            new(JwtRegisteredClaimNames.Email, account.Result.Name ?? throw new InvalidOperationException()),
-            new(ClaimTypes.Name, account.Result.Name ?? throw new InvalidOperationException()),
-            new(ClaimTypes.Role, request.Role ?? "User")
-        };
-
-        var claimsIdentity = new ClaimsIdentity(claims, "Bearer");
+        
+        var claimsIdentity = new ClaimsIdentity(newClaims, "Bearer");
 
 
         var token = _authenticationServices.CreateSecurityToken(claimsIdentity);
         return Ok(token);
-
-        /*if (!account.IsSuccess)
-        {
-            return StatusCode(account.HttpStatusCode, account);
-        }
-
-        return CreatedAtAction(nameof(GetAccount),
-            new { accountNumber = account.Result.Id }, account);*/
     }
 
     [HttpPost("login")]
@@ -78,15 +60,15 @@ public class AuthenticationController : ControllerBase
         {
             var claimsIdentity = new ClaimsIdentity(new Claim[]
             {
-                new(JwtRegisteredClaimNames.Sub, account.Result.Name ?? throw new InvalidOperationException()),
-                new(JwtRegisteredClaimNames.Email, account.Result.Name ?? throw new InvalidOperationException())
-            });
+                new(JwtRegisteredClaimNames.Sub, account.Result.Username),
+                new(ClaimTypes.Name, account.Result.Name),
+                new(ClaimTypes.Role, account.Result.Role)
+            }, "Bearer");
 
             var token = _authenticationServices.CreateSecurityToken(claimsIdentity);
             return Ok(token);
         }
 
         return Ok(account);
-
     }
 }

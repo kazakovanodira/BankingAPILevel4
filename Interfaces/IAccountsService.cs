@@ -9,7 +9,7 @@ public interface IAccountsService
     Task<ApiResponse<AccountDto>> CreateAccount(CreateAccountRequest request);
     Task<ApiResponse<AccountDto>> GetAccount(AccountRequest request);
     Task<ApiResponse<AccountDto>> FindAccountByUsername(string username);
-    Task<ApiResponse<AccountDto>> CheckIfPasswordsMatchesUsername(LoginRequest loginDetails);
+    Task<ApiResponse<LoginResponse>> CheckIfPasswordsMatchesUsername(LoginRequest loginDetails);
     Task<ApiResponse<(IEnumerable<AccountDto>, PaginationMetadata)>>  GetAccounts(string? name, 
         int pageNumber, 
         int pageSize,
