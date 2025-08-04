@@ -29,13 +29,13 @@ public class AccountsController : ControllerBase
     /// <returns>
     /// Returns new account details.
     /// </returns>
-    [HttpPost("register")]
+    [HttpPost("NewAccount")]
     [AllowAnonymous] 
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Consumes("application/json")]
     [Produces("application/json")]
-    public async Task<IActionResult> Register([FromBody] CreateAccountRequest request)
+    public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest request)
     {
         var account = await _service.CreateAccount(request);
         
