@@ -22,16 +22,15 @@ public class AccountsController : ControllerBase
         _service = service;
     }
     
-    // Add create accound here
-    
     /// <summary>
-    /// Registers a new user account and returns a JWT token upon successful registration.
+    /// Registers a new user account and returns the new account details.
     /// </summary>
     /// <param name="request">The request payload containing user registration details such as name, username, password, and role.</param>
     /// <returns>
-    /// Returns ApiResponse containing a JWT token if the account is created successfully.
+    /// Returns new account details.
     /// </returns>
     [HttpPost("register")]
+    [AllowAnonymous] 
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Consumes("application/json")]
