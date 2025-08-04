@@ -1,12 +1,11 @@
 using Asp.Versioning;
-using banking_api_repo;
-using banking_api_repo.Data;
-using banking_api_repo.Repositories;
+using BankingAPILevel4;
+using BankingAPILevel4.Data;
+using BankingAPILevel4.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using banking_api_repo.Services;
-using banking_api_repo.Formatters;
-using banking_api_repo.Interfaces;
+using BankingAPILevel4.Services;
+using BankingAPILevel4.Formatters;
+using BankingAPILevel4.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args).RegisterAuthentication();
 

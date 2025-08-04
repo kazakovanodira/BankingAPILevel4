@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace banking_api_repo.Hasher;
+namespace BankingAPILevel4.Hasher;
 
 public static class Md5Hasher
 {

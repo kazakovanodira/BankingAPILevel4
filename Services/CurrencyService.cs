@@ -1,10 +1,10 @@
 using System.Text.Json;
-using banking_api_repo.Interfaces;
-using banking_api_repo.Models.Requests;
-using banking_api_repo.Models.Responses;
+using BankingAPILevel4.Interfaces;
+using BankingAPILevel4.Models.Requests;
+using BankingAPILevel4.Models.Responses;
 using Microsoft.Extensions.Options;
 
-namespace banking_api_repo.Services;
+namespace BankingAPILevel4.Services;
 
 public class CurrencyService : ICurrencyServices
 {

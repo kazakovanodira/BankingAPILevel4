@@ -1,10 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using banking_api_repo.Interfaces;
-using banking_api_repo.Models.Requests;
+using BankingAPILevel4.Interfaces;
+using BankingAPILevel4.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
 
-namespace banking_api_repo.Controllers;
+namespace BankingAPILevel4.Controllers;
 
 [ApiController]
 [Route("api/authentication")]

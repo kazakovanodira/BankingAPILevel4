@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace banking_api_repo.Models;
+namespace BankingAPILevel4.Models;
 
 public class User
 {

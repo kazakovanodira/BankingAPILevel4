@@ -1,11 +1,11 @@
 using AutoMapper;
-using banking_api_repo.Hasher;
-using banking_api_repo.Interfaces;
-using banking_api_repo.Models;
-using banking_api_repo.Models.Requests;
-using banking_api_repo.Models.Responses;
+using BankingAPILevel4.Hasher;
+using BankingAPILevel4.Interfaces;
+using BankingAPILevel4.Models;
+using BankingAPILevel4.Models.Requests;
+using BankingAPILevel4.Models.Responses;
 
-namespace banking_api_repo.Services;
+namespace BankingAPILevel4.Services;
 
 public class AccountsServices : IAccountsService
 {

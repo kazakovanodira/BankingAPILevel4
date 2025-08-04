@@ -1,10 +1,10 @@
-using banking_api_repo.Data;
-using banking_api_repo.Interfaces;
-using banking_api_repo.Models;
-using banking_api_repo.Services;
+using BankingAPILevel4.Data;
+using BankingAPILevel4.Interfaces;
+using BankingAPILevel4.Models;
+using BankingAPILevel4.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace banking_api_repo.Repositories;
+namespace BankingAPILevel4.Repositories;
 
 public class AccountRepository : IAccountRepository
 {

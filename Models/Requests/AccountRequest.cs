@@ -1,3 +1,3 @@
-namespace banking_api_repo.Models.Requests;
+namespace BankingAPILevel4.Models.Requests;
 
 public record AccountRequest(Guid AccountNumber);

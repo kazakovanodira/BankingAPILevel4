@@ -1,7 +1,7 @@
-using banking_api_repo.Models;
+using BankingAPILevel4.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace banking_api_repo.Data;
+namespace BankingAPILevel4.Data;
 
 public class UserContext : DbContext
 {

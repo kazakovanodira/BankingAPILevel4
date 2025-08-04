@@ -1,12 +1,12 @@
 using System.Text;
-using banking_api_repo.Data;
-using banking_api_repo.Models;
+using BankingAPILevel4.Data;
+using BankingAPILevel4.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
-namespace banking_api_repo;
+namespace BankingAPILevel4;
 
 public static class WebApplicationBuilderExtensions
 {

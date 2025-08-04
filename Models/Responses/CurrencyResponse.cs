@@ -1,3 +1,3 @@
-namespace banking_api_repo.Models.Responses;
+namespace BankingAPILevel4.Models.Responses;
 
 public record CurrencyResponse(Dictionary<string, decimal> Data);

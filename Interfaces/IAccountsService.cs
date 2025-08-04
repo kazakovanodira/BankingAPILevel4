@@ -1,8 +1,8 @@
-using banking_api_repo.Models.Requests;
-using banking_api_repo.Models.Responses;
-using banking_api_repo.Services;
+using BankingAPILevel4.Models.Requests;
+using BankingAPILevel4.Models.Responses;
+using BankingAPILevel4.Services;
 
-namespace banking_api_repo.Interfaces;
+namespace BankingAPILevel4.Interfaces;
 
 public interface IAccountsService
 {

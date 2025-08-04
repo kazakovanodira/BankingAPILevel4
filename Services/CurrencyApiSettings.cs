@@ -1,4 +1,4 @@
-namespace banking_api_repo.Services;
+namespace BankingAPILevel4.Services;
 
 public class CurrencyApiSettings
 {

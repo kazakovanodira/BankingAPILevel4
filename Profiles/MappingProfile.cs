@@ -1,9 +1,9 @@
 using AutoMapper;
-using banking_api_repo.Models;
-using banking_api_repo.Models.Requests;
-using banking_api_repo.Models.Responses;
+using BankingAPILevel4.Models;
+using BankingAPILevel4.Models.Requests;
+using BankingAPILevel4.Models.Responses;
 
-namespace banking_api_repo.Profiles;
+namespace BankingAPILevel4.Profiles;
 
 public class MappingProfile : Profile
 {
