@@ -30,6 +30,8 @@ public class AuthenticationController : ControllerBase
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public async Task<IActionResult> Register([FromBody] CreateAccountRequest request)
     {
         var account = await _service.CreateAccount(request);
@@ -65,6 +67,8 @@ public class AuthenticationController : ControllerBase
     [HttpPost("login")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))] // Or Type = typeof(ServiceResponse<string>) if that's the structure
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public async Task<IActionResult> Login(LoginRequest login)
     {
         var account = await _service.CheckIfPasswordsMatchesUsername(login);
