@@ -39,7 +39,7 @@ public class AccountsController : ControllerBase
     {
         var account = await _service.CreateAccount(request);
         
-        return Ok(account.Result);
+        return CreatedAtAction(nameof(GetAccount), new { accountNumber = account.Result.AccountNumber }, account.Result);
     }
     
     /// <summary>
