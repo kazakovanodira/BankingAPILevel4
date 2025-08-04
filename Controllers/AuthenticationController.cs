@@ -10,13 +10,10 @@ namespace banking_api_repo.Controllers;
 [Route("api/authentication")]
 public class AuthenticationController : ControllerBase
 {
-    private readonly IAccountsService _service;
     private readonly IAuthenticationServices _authenticationServices;
     
-    public AuthenticationController(IAccountsService service, 
-        IAuthenticationServices authenticationServices)
+    public AuthenticationController(IAuthenticationServices authenticationServices)
     {
-        _service = service;
         _authenticationServices = authenticationServices;
     }
 
@@ -34,7 +31,7 @@ public class AuthenticationController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> Login(LoginRequest login)
     {
-        var account = await _service.CheckIfPasswordsMatchesUsername(login);
+        var account = await _authenticationServices.CheckIfPasswordsMatchesUsername(login);
 
         if (account.IsSuccess)
         {

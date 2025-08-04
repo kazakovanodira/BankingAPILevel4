@@ -81,58 +81,6 @@ public class AccountsServices : IAccountsService
             HttpStatusCode = 200
         };
     }
-    
-    public async Task<ApiResponse<AccountDto>> FindAccountByUsername(string username)
-    {
-        var account = await _accountRepository.GetAccountByUserName(username);
-        
-        if (account is null)
-        {
-            return new ApiResponse<AccountDto>
-            {
-                ErrorMessage = "Account not found.",
-                HttpStatusCode = 404
-            };
-        }
-        
-        return new ApiResponse<AccountDto>
-        {
-            Result = _mapper.Map<AccountDto>(account),
-            HttpStatusCode = 200
-        };
-    }
-    
-    public async Task<ApiResponse<LoginResponse>> CheckIfPasswordsMatchesUsername(LoginRequest loginDetails)
-    {
-        loginDetails.Password = Md5Hasher.ComputeHash(loginDetails.Password);
-
-        var account = await _accountRepository.GetAccountByUserName(loginDetails.Username);
-        
-        if (account is null)
-        {
-            return new ApiResponse<LoginResponse>
-            {
-                ErrorMessage = "Account not found.",
-                HttpStatusCode = 404
-            };
-        }
-
-        if (account.Password != loginDetails.Password)
-        {
-            return new ApiResponse<LoginResponse>
-            {
-                ErrorMessage = "Password doesn't match the username.",
-                HttpStatusCode = 401
-            };
-        }
-        
-        return new ApiResponse<LoginResponse>
-        {
-            Result = _mapper.Map<LoginResponse>(account),
-            HttpStatusCode = 200
-        };
-    }
-
 
     public async Task<ApiResponse<BalanceResponse>> MakeDeposit(TransactionRequest request)
     {
