@@ -22,6 +22,27 @@ public class AccountsController : ControllerBase
         _service = service;
     }
     
+    // Add create accound here
+    
+    /// <summary>
+    /// Registers a new user account and returns a JWT token upon successful registration.
+    /// </summary>
+    /// <param name="request">The request payload containing user registration details such as name, username, password, and role.</param>
+    /// <returns>
+    /// Returns ApiResponse containing a JWT token if the account is created successfully.
+    /// </returns>
+    [HttpPost("register")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    public async Task<IActionResult> Register([FromBody] CreateAccountRequest request)
+    {
+        var account = await _service.CreateAccount(request);
+        
+        return Ok(account.Result);
+    }
+    
     /// <summary>
     /// Retrieves accounts with the specified name or the list of all accounts otherwise.
     /// </summary>

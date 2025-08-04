@@ -19,43 +19,6 @@ public class AuthenticationController : ControllerBase
         _service = service;
         _authenticationServices = authenticationServices;
     }
-    
-    /// <summary>
-    /// Registers a new user account and returns a JWT token upon successful registration.
-    /// </summary>
-    /// <param name="request">The request payload containing user registration details such as name, username, password, and role.</param>
-    /// <returns>
-    /// Returns ApiResponse containing a JWT token if the account is created successfully.
-    /// </returns>
-    [HttpPost("register")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [Consumes("application/json")]
-    [Produces("application/json")]
-    public async Task<IActionResult> Register([FromBody] CreateAccountRequest request)
-    {
-        var account = await _service.CreateAccount(request);
-        
-        var newClaims = new List<Claim>
-        {
-            new("Name", request.Name)
-        };
-        
-        if (request.Role is "Admin")
-        {
-            newClaims.Add(new Claim(ClaimTypes.Role, "Admin"));
-        }
-        else
-        {
-            newClaims.Add(new Claim(ClaimTypes.Role, "User"));
-        }
-        
-        var claimsIdentity = new ClaimsIdentity(newClaims, "Bearer");
-
-
-        var token = _authenticationServices.CreateSecurityToken(claimsIdentity);
-        return Ok(token);
-    }
 
     /// <summary>
     /// Authenticates a user and returns a JWT token if credentials are valid.
