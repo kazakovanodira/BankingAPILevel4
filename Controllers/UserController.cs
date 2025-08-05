@@ -23,7 +23,7 @@ public class UserController : ControllerBase
     /// <returns>
     /// Returns new account details.
     /// </returns>
-    [HttpPost("NewAccount")]
+    [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ApiResponse<AccountDto>))]
     [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(ApiResponse<AccountDto>))]
     [Consumes("application/json")]
