@@ -15,12 +15,12 @@ namespace BankingAPILevel4.Services;
 public class AuthenticationServices : IAuthenticationServices
 {
     private readonly IMapper _mapper;
-    private readonly IAccountRepository _accountRepository;
+    private readonly IAuthenticationRepository _authenticationRepository;
     private readonly JwtSettings? _settings;
     private readonly byte[] _key;
 
     public AuthenticationServices(IOptions<JwtSettings> jwtOptions, 
-            IAccountRepository accountRepository, 
+        IAuthenticationRepository authenticationRepository, 
             IMapper mapper)
     {
         _settings = jwtOptions.Value;
@@ -30,7 +30,7 @@ public class AuthenticationServices : IAuthenticationServices
         ArgumentNullException.ThrowIfNull(_settings.Audiences[0]);
         ArgumentNullException.ThrowIfNull(_settings.Issuer);
         _key = Encoding.ASCII.GetBytes(_settings?.SigningKey!);
-        _accountRepository = accountRepository;
+        _authenticationRepository = authenticationRepository;
         _mapper = mapper;
     }
 
@@ -56,7 +56,7 @@ public class AuthenticationServices : IAuthenticationServices
     {
         loginDetails.Password = Md5Hasher.ComputeHash(loginDetails.Password);
 
-        var account = await _accountRepository.GetAccountByUserName(loginDetails.Username);
+        var account = await _authenticationRepository.Get(loginDetails.Username);
         
         if (account is null)
         {

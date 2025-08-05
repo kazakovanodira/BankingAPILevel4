@@ -1,6 +1,6 @@
 using BankingAPILevel4.Data;
 using BankingAPILevel4.Interfaces;
-using BankingAPILevel4.Models;
+using BankingAPILevel4.Models.Entities;
 using BankingAPILevel4.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,10 +31,7 @@ public class AccountRepository : IAccountRepository
 
     public async Task<User?> GetAccountByAccountNumber(Guid? accountNumber) =>
         await _context.Users.FirstOrDefaultAsync(u => u.AccountNumber == accountNumber);
-        
-    public async Task<User?> GetAccountByUserName(string username) =>
-        await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-        
+    
     public async Task<IEnumerable<User>> GetAccountsAsync() =>
         await _context.Users.OrderBy(u => u.Name).ToListAsync();
     

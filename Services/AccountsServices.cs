@@ -1,7 +1,7 @@
 using AutoMapper;
 using BankingAPILevel4.Hasher;
 using BankingAPILevel4.Interfaces;
-using BankingAPILevel4.Models;
+using BankingAPILevel4.Models.Entities;
 using BankingAPILevel4.Models.Requests;
 using BankingAPILevel4.Models.Responses;
 
@@ -21,28 +21,6 @@ public class AccountsServices : IAccountsService
         _accountRepository = accountRepository;
         _currencyServices = currencyServices;
         _mapper = mapper;
-    }
-    
-    public async Task<ApiResponse<AccountDto>> CreateAccount(CreateAccountRequest request)
-    {
-        request.Password = Md5Hasher.ComputeHash(request.Password);
-        
-        var user = _mapper.Map<User>(request);
-
-        if (await _accountRepository.GetAccountByUserName(user.Username) != null)
-        {
-            return new ApiResponse<AccountDto>
-            {
-                ErrorMessage = "Account with this username already exists.",
-                HttpStatusCode = 409
-            };
-        }
-        
-        return new ApiResponse<AccountDto>
-        {
-            Result = _mapper.Map<AccountDto>(await _accountRepository.AddAccount(user)),
-            HttpStatusCode = 201
-        };
     }
     
     public async Task<ApiResponse<(IEnumerable<AccountDto>, PaginationMetadata)>> GetAccounts(string? name, 

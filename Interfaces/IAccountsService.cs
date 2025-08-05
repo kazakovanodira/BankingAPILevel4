@@ -6,7 +6,6 @@ namespace BankingAPILevel4.Interfaces;
 
 public interface IAccountsService
 {
-    Task<ApiResponse<AccountDto>> CreateAccount(CreateAccountRequest request);
     Task<ApiResponse<AccountDto>> GetAccount(AccountRequest request);
     Task<ApiResponse<(IEnumerable<AccountDto>, PaginationMetadata)>>  GetAccounts(string? name, 
         int pageNumber, 
