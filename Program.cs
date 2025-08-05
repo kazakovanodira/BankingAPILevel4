@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using BankingAPILevel4.Data;
+using BankingAPILevel4.ErrorHandler;
 using BankingAPILevel4.Extensions;
 using BankingAPILevel4.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -51,8 +52,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
