@@ -37,6 +37,12 @@ public class UserController : ControllerBase
             return StatusCode(account.HttpStatusCode, account.ErrorMessage);
         }
         
-        return Ok(account.Result);
+        var createdAccount = account.Result;
+
+        return CreatedAtRoute(
+            routeName: "GetAccountById",                  
+            routeValues: new { id = createdAccount.AccountNumber }, 
+            value: createdAccount
+        );
     }
 }

@@ -59,7 +59,7 @@ public class AccountsController : ControllerBase
     /// </summary>
     /// <param name="accountNumber">The unique identifier of the account.</param>
     /// <returns>The account details.</returns>
-    [HttpGet("{accountNumber}")]
+    [HttpGet("{accountNumber}", Name = "GetAccountById")]
     [Authorize(Roles = "Admin, User")]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status404NotFound)]
