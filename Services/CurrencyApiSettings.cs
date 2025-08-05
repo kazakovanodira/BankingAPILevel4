@@ -1,7 +1,3 @@
 namespace BankingAPILevel4.Services;
 
-public class CurrencyApiSettings
-{
-    public string BaseUrl { get; set; } = string.Empty;
-    public string ApiKey { get; set; } = string.Empty;
-}
+public record CurrencyApiSettings(string BaseUrl, string ApiKey);
