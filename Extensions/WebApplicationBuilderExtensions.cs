@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
-namespace BankingAPILevel4;
+namespace BankingAPILevel4.Extensions;
 
 public static class WebApplicationBuilderExtensions
 {
