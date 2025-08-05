@@ -31,20 +31,7 @@ public class AuthenticationController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> Login(LoginRequest login)
     {
-        var account = await _authenticationServices.CheckIfPasswordsMatchesUsername(login);
-
-        if (account.IsSuccess)
-        {
-            var claimsIdentity = new ClaimsIdentity(new Claim[]
-            {
-                new(JwtRegisteredClaimNames.Sub, account.Result.Username),
-                new(ClaimTypes.Name, account.Result.Name),
-                new(ClaimTypes.Role, account.Result.Role)
-            }, "Bearer");
-
-            var token = _authenticationServices.CreateSecurityToken(claimsIdentity);
-            return Ok(token);
-        }
+        var account = await _authenticationServices.GetToken(login);
         
         return Ok(account);
     }

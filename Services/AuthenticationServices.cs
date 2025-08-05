@@ -16,12 +16,14 @@ public class AuthenticationServices : IAuthenticationServices
 {
     private readonly IMapper _mapper;
     private readonly IAuthenticationRepository _authenticationRepository;
+    private readonly IAccountRepository _accountRepository;
     private readonly JwtSettings? _settings;
     private readonly byte[] _key;
 
     public AuthenticationServices(IOptions<JwtSettings> jwtOptions, 
         IAuthenticationRepository authenticationRepository, 
-            IMapper mapper)
+        IAccountRepository accountRepository,
+        IMapper mapper)
     {
         _settings = jwtOptions.Value;
         ArgumentNullException.ThrowIfNull(_settings);
@@ -31,6 +33,7 @@ public class AuthenticationServices : IAuthenticationServices
         ArgumentNullException.ThrowIfNull(_settings.Issuer);
         _key = Encoding.ASCII.GetBytes(_settings?.SigningKey!);
         _authenticationRepository = authenticationRepository;
+        _accountRepository = accountRepository;
         _mapper = mapper;
     }
 
@@ -52,33 +55,44 @@ public class AuthenticationServices : IAuthenticationServices
         return TokenHandler.WriteToken(token);
     }
     
-    public async Task<ApiResponse<LoginResponse>> CheckIfPasswordsMatchesUsername(LoginRequest loginDetails)
+    public async Task<ApiResponse<string>> GetToken(LoginRequest loginDetails)
     {
         loginDetails.Password = Md5Hasher.ComputeHash(loginDetails.Password);
 
-        var account = await _authenticationRepository.Get(loginDetails.Username);
+        var accountCredentials = await _authenticationRepository.Get(loginDetails.Username);
         
-        if (account is null)
+        if (accountCredentials is null)
         {
-            return new ApiResponse<LoginResponse>
+            return new ApiResponse<string>
             {
                 ErrorMessage = "Account not found.",
                 HttpStatusCode = 404
             };
         }
 
-        if (account.Password != loginDetails.Password)
+        if (accountCredentials.Password != loginDetails.Password)
         {
-            return new ApiResponse<LoginResponse>
+            return new ApiResponse<string>
             {
                 ErrorMessage = "Password doesn't match the username.",
                 HttpStatusCode = 401
             };
         }
         
-        return new ApiResponse<LoginResponse>
+        var accountDetails = await _accountRepository.GetAccountById(accountCredentials.UserId);
+
+        var claimsIdentity = new ClaimsIdentity(new Claim[]
         {
-            Result = _mapper.Map<LoginResponse>(account),
+            new(JwtRegisteredClaimNames.Sub, accountCredentials.Username),
+            new(ClaimTypes.Name, accountDetails.Name),
+            new(ClaimTypes.Role, accountDetails.Role)
+        }, "Bearer");
+
+        var token = CreateSecurityToken(claimsIdentity);
+        
+        return new ApiResponse<string>
+        {
+            Result = token,
             HttpStatusCode = 200
         };
     }

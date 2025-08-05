@@ -32,6 +32,10 @@ public class AccountRepository : IAccountRepository
     public async Task<User?> GetAccountByAccountNumber(Guid? accountNumber) =>
         await _context.Users.FirstOrDefaultAsync(u => u.AccountNumber == accountNumber);
     
+    public async Task<User?> GetAccountById(int id) =>
+        await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+    
     public async Task<IEnumerable<User>> GetAccountsAsync() =>
         await _context.Users.OrderBy(u => u.Name).ToListAsync();
     

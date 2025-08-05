@@ -7,5 +7,5 @@ namespace BankingAPILevel4.Interfaces;
 public interface IAuthenticationServices
 {
     string CreateSecurityToken(ClaimsIdentity identity);
-    Task<ApiResponse<LoginResponse>> CheckIfPasswordsMatchesUsername(LoginRequest loginDetails);
+    Task<ApiResponse<string>> GetToken(LoginRequest loginDetails);
 }
