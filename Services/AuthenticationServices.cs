@@ -34,6 +34,8 @@ public class AuthenticationServices : IAuthenticationServices
         _accountRepository = accountRepository;
     }
     
+    private static JwtSecurityTokenHandler TokenHandler => new();
+    
     public async Task<ApiResponse<string>> GetToken(LoginRequest loginDetails)
     {
         loginDetails.Password = Md5Hasher.ComputeHash(loginDetails.Password);
@@ -76,8 +78,6 @@ public class AuthenticationServices : IAuthenticationServices
         };
     }
     
-    private static JwtSecurityTokenHandler TokenHandler => new();
-
     private string CreateSecurityToken(ClaimsIdentity identity)
     {
         var tokenDescriptor = new SecurityTokenDescriptor()
