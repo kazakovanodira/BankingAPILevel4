@@ -14,19 +14,6 @@ public class BankingDbContext : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>()
-            .HasIndex(u => u.AccountNumber)
-            .IsUnique();
-
-        modelBuilder.Entity<UserCredential>()
-            .HasIndex(uc => uc.Username)
-            .IsUnique();
-
-        modelBuilder.Entity<User>()
-            .HasOne(u => u.UserCredential)
-            .WithOne(uc => uc.User)
-            .HasForeignKey<UserCredential>(uc => uc.UserId);
-
         base.OnModelCreating(modelBuilder);
     }
 }

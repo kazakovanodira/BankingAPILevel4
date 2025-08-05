@@ -13,8 +13,8 @@ public class UserCredential
     
     public string Password { get; set; }
     
-    public int UserId { get; set; }
-
     [ForeignKey("UserId")]
     public User User { get; set; }
+    
+    public int UserId { get; set; }
 }

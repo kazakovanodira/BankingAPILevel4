@@ -26,6 +26,7 @@ public class UserServices : IUserServices
         createAccountRequest.Password = Md5Hasher.ComputeHash(createAccountRequest.Password);
         
         var user = _mapper.Map<User>(createAccountRequest);
+
         var userCredentials = _mapper.Map<UserCredential>(createAccountRequest);
 
         if (await _authenticationRepository.Get(userCredentials.Username) != null)
@@ -37,12 +38,15 @@ public class UserServices : IUserServices
             };
         }
 
-        await _accountRepository.AddAccount(user);
+        var createdUser = await _accountRepository.AddAccount(user);
+        
+        userCredentials.UserId = createdUser.Id;
+        
         await _authenticationRepository.Add(userCredentials);
         
         return new ApiResponse<AccountDto>
         {
-            Result = _mapper.Map<AccountDto>(await _accountRepository.AddAccount(user)),
+            Result = _mapper.Map<AccountDto>(createdUser),
             HttpStatusCode = 201
         };
     }
