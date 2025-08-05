@@ -27,7 +27,12 @@ public class AccountsServices : IAccountsService
         string? orderBy,
         bool descending)
     {
-        var (accounts, paginationMetadata) = await _accountRepository.GetAccountsAsync(name, pageNumber, pageSize, orderBy, descending);
+        var (accounts, paginationMetadata) = await _accountRepository.GetAccountsAsync(
+            name, 
+            pageNumber, 
+            pageSize, 
+            orderBy, 
+            descending);
 
         var accountDtos = _mapper.Map<IEnumerable<AccountDto>>(accounts);
         
