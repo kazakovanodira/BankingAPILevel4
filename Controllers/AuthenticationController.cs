@@ -29,7 +29,7 @@ public class AuthenticationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Consumes("application/json")]
     [Produces("application/json")]
-    public async Task<IActionResult> Login(LoginRequest login)
+    public async Task<IActionResult> Login([FromBody]LoginRequest login)
     {
         var account = await _authenticationServices.GetToken(login);
         
