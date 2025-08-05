@@ -34,9 +34,9 @@ public class AccountsController : ControllerBase
     /// <remarks>Supports CSV format via content negotiation by setting Accept header to text/csv.</remarks>
     [HttpGet("all")]
     [Authorize(Roles = "Admin")]
+    [Produces("application/json", "text/csv")]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status403Forbidden)]
-    [Produces("application/json", "text/csv")]
     public async Task<IActionResult> GetAccounts([FromQuery]string? name, 
         int pageNumber = 1, 
         int pageSize = 5,
