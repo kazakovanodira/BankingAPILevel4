@@ -29,7 +29,7 @@ public class AccountsController : ControllerBase
     /// <param name="pageNumber">The number of the page that the client requested.</param>
     /// <param name="pageSize">The size of the page.</param>
     /// <returns>The list of accounts with the specified name or the list of all accounts.</returns>
-    [HttpGet]
+    [HttpGet("all")]
     [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
     [Produces("application/json", "text/csv")]

@@ -23,8 +23,7 @@ public class UserController : ControllerBase
     /// Returns new account details.
     /// </returns>
     [HttpPost("NewAccount")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(string))]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest request)

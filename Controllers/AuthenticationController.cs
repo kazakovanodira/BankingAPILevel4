@@ -24,7 +24,7 @@ public class AuthenticationController : ControllerBase
     /// <returns>
     /// Returns an ApiResponse containing a JWT token if authentication is successful
     /// </returns>
-    [HttpPost("login")]
+    [HttpPost("authenticate")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))] // Or Type = typeof(ServiceResponse<string>) if that's the structure
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Consumes("application/json")]

@@ -16,11 +16,13 @@ builder.Services.AddControllers(options =>
     options.RespectBrowserAcceptHeader = true;
     options.OutputFormatters.Add(new CsvOutputFormatter());
 });
-builder.Services.AddScoped<IAuthenticationServices, AuthenticationServices>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IAccountsService, AccountsServices>();
+builder.Services.AddScoped<IAuthenticationServices, AuthenticationServices>();
+builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<ICurrencyServices, CurrencyService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
 builder.Services.Configure<CurrencyApiSettings>(
     builder.Configuration.GetSection("CurrencyApi"));
 builder.Services.AddHttpClient<ICurrencyServices, CurrencyService>(client =>
