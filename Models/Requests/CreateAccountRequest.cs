@@ -11,8 +11,6 @@ public class CreateAccountRequest
     public string Username { get; set; }
     
     [Required(ErrorMessage = "Password is required.")]
-    //[RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])$", 
-    //    ErrorMessage = "Password must meet requirements")]
     public string Password { get; set; }
     
     [Required]
