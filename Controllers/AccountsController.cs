@@ -165,7 +165,7 @@ public class AccountsController : ControllerBase
     /// <returns>The converted balance in the requested currencies.</returns>
     [HttpGet("{accountNumber}/balances")]
     [Authorize(Roles = "Admin, User")]
-    [ProducesResponseType(typeof(ApiResponse<ConvertedBalances>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ConvertedBalances), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<ConvertedBalances>), StatusCodes.Status404NotFound)]
     [Consumes("application/json")]
     [Produces("application/json")]
