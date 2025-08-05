@@ -21,6 +21,12 @@ public class UserServices : IUserServices
         _authenticationRepository = authenticationRepository;
         _mapper = mapper;
     }
+    
+    /// <summary>
+    /// Creates a new user account and stores the user credentials.
+    /// </summary>
+    /// <param name="createAccountRequest">The registration data including name, username, password, and role.</param>
+    /// <returns>Returns the created account details wrapped in an API response.</returns>
     public async Task<ApiResponse<AccountDto>> CreateAccount(CreateAccountRequest createAccountRequest)
     {
         createAccountRequest.Password = Md5Hasher.ComputeHash(createAccountRequest.Password);
