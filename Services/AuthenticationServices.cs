@@ -33,24 +33,6 @@ public class AuthenticationServices : IAuthenticationServices
         _authenticationRepository = authenticationRepository;
         _accountRepository = accountRepository;
     }
-
-    private static JwtSecurityTokenHandler TokenHandler => new();
-
-    private string CreateSecurityToken(ClaimsIdentity identity)
-    {
-        var tokenDescriptor = new SecurityTokenDescriptor()
-        {
-            Subject = identity,
-            Expires = DateTime.Now.AddHours(5),
-            Audience = _settings!.Audiences?[0]!,
-            Issuer = _settings.Issuer,
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_key),
-                SecurityAlgorithms.HmacSha256Signature)
-        };
-
-        var token = TokenHandler.CreateToken(tokenDescriptor);
-        return TokenHandler.WriteToken(token);
-    }
     
     public async Task<ApiResponse<string>> GetToken(LoginRequest loginDetails)
     {
@@ -92,5 +74,23 @@ public class AuthenticationServices : IAuthenticationServices
             Result = token,
             HttpStatusCode = 200
         };
+    }
+    
+    private static JwtSecurityTokenHandler TokenHandler => new();
+
+    private string CreateSecurityToken(ClaimsIdentity identity)
+    {
+        var tokenDescriptor = new SecurityTokenDescriptor()
+        {
+            Subject = identity,
+            Expires = DateTime.Now.AddHours(5),
+            Audience = _settings!.Audiences?[0]!,
+            Issuer = _settings.Issuer,
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_key),
+                SecurityAlgorithms.HmacSha256Signature)
+        };
+
+        var token = TokenHandler.CreateToken(tokenDescriptor);
+        return TokenHandler.WriteToken(token);
     }
 }
