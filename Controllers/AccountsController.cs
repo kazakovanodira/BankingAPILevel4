@@ -35,12 +35,11 @@ public class AccountsController : ControllerBase
     [HttpGet("all")]
     [Authorize(Roles = "Admin")]
     [Produces("application/json", "text/csv")]
-    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(IEnumerable<AccountDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAccounts([FromQuery]string? name, 
         int pageNumber = 1, 
         int pageSize = 5,
-        string? orderBy = "Name",
+        string? orderBy = "Name",   
         bool descending = false)
     {
         if (pageSize > MaxAccountsPageSize)
@@ -64,7 +63,6 @@ public class AccountsController : ControllerBase
     [Authorize(Roles = "Admin, User")]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status403Forbidden)]
     [Produces("application/json")]
     public async Task<IActionResult> GetAccount(Guid accountNumber)
     {
@@ -86,7 +84,6 @@ public class AccountsController : ControllerBase
     [Authorize(Roles = "Admin, User")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status403Forbidden)]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> MakeDeposit(Guid accountNumber,[FromBody] TransactionRequest request)
@@ -115,7 +112,6 @@ public class AccountsController : ControllerBase
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status403Forbidden)]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> MakeWithdrawal(Guid accountNumber,[FromBody] TransactionRequest request)
@@ -143,7 +139,6 @@ public class AccountsController : ControllerBase
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status403Forbidden)]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> MakeTransfer([FromBody] TransactionRequest request)
@@ -170,9 +165,8 @@ public class AccountsController : ControllerBase
     /// <returns>The converted balance in the requested currencies.</returns>
     [HttpGet("{accountNumber}/balances")]
     [Authorize(Roles = "Admin, User")]
-    [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ApiResponse<ConvertedBalances>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<ConvertedBalances>), StatusCodes.Status404NotFound)]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> CheckConvertedBalance(Guid accountNumber, [FromQuery] string currency)
