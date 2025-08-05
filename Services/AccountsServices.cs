@@ -1,7 +1,5 @@
 using AutoMapper;
-using BankingAPILevel4.Hasher;
 using BankingAPILevel4.Interfaces;
-using BankingAPILevel4.Models.Entities;
 using BankingAPILevel4.Models.Requests;
 using BankingAPILevel4.Models.Responses;
 

@@ -1,5 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using BankingAPILevel4.Interfaces;
 using BankingAPILevel4.Models.Requests;
 using BankingAPILevel4.Models.Responses;
