@@ -14,7 +14,6 @@ namespace BankingAPILevel4.Services;
 
 public class AuthenticationServices : IAuthenticationServices
 {
-    private readonly IMapper _mapper;
     private readonly IAuthenticationRepository _authenticationRepository;
     private readonly IAccountRepository _accountRepository;
     private readonly JwtSettings? _settings;
@@ -22,8 +21,7 @@ public class AuthenticationServices : IAuthenticationServices
 
     public AuthenticationServices(IOptions<JwtSettings> jwtOptions, 
         IAuthenticationRepository authenticationRepository, 
-        IAccountRepository accountRepository,
-        IMapper mapper)
+        IAccountRepository accountRepository)
     {
         _settings = jwtOptions.Value;
         ArgumentNullException.ThrowIfNull(_settings);
@@ -34,7 +32,6 @@ public class AuthenticationServices : IAuthenticationServices
         _key = Encoding.ASCII.GetBytes(_settings?.SigningKey!);
         _authenticationRepository = authenticationRepository;
         _accountRepository = accountRepository;
-        _mapper = mapper;
     }
 
     private static JwtSecurityTokenHandler TokenHandler => new();
