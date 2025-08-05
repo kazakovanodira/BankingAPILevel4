@@ -36,7 +36,7 @@ public class AuthenticationServices : IAuthenticationServices
 
     private static JwtSecurityTokenHandler TokenHandler => new();
 
-    public string CreateSecurityToken(ClaimsIdentity identity)
+    private string CreateSecurityToken(ClaimsIdentity identity)
     {
         var tokenDescriptor = new SecurityTokenDescriptor()
         {
