@@ -23,12 +23,15 @@ public class AccountsController : ControllerBase
     }
     
     /// <summary>
-    /// Retrieves accounts with the specified name or the list of all accounts otherwise.
+    /// Retrieves a paginated list of accounts with optional filtering by name and sorting.
     /// </summary>
-    /// <param name="name">The name to retrieve accounts by.</param>
-    /// <param name="pageNumber">The number of the page that the client requested.</param>
-    /// <param name="pageSize">The size of the page.</param>
-    /// <returns>The list of accounts with the specified name or the list of all accounts.</returns>
+    /// <param name="name">Optional name to filter accounts.</param>
+    /// <param name="pageNumber">The page number to retrieve.</param>
+    /// <param name="pageSize">The number of items per page (max 10).</param>
+    /// <param name="orderBy">The field to sort by (e.g., Name).</param>
+    /// <param name="descending">Whether to sort in descending order.</param>
+    /// <returns>A paginated and optionally filtered list of accounts.</returns>
+    /// <remarks>Supports CSV format via content negotiation by setting Accept header to text/csv.</remarks>
     [HttpGet("all")]
     [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
@@ -160,11 +163,11 @@ public class AccountsController : ControllerBase
     }
     
     /// <summary>
-    /// Converts balance of the specified account to the requested currencies.
+    /// Converts the balance of the specified account into the provided currency or currencies.
     /// </summary>
-    /// <param name="accountNumber">The account number to check balance from</param>
-    /// <param name="currency">The currencies to convert the balance to.</param>
-    /// <returns>The list of the converted balance.</returns>
+    /// <param name="accountNumber">The unique account number to retrieve balance for.</param>
+    /// <param name="currency">Comma-separated list of target currencies (e.g., USD,EUR).</param>
+    /// <returns>The converted balance in the requested currencies.</returns>
     [HttpGet("{accountNumber}/balances")]
     [Authorize(Roles = "Admin, User")]
     [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
