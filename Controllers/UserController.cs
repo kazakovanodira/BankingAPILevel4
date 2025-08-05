@@ -24,8 +24,8 @@ public class UserController : ControllerBase
     /// Returns new account details.
     /// </returns>
     [HttpPost("register")]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ApiResponse<AccountDto>))]
-    [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(ApiResponse<AccountDto>))]
+    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status409Conflict)]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest request)
