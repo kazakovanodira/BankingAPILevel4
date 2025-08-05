@@ -1,10 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using AutoMapper;
+using BankingAPILevel4.Configurations;
 using BankingAPILevel4.Hasher;
 using BankingAPILevel4.Interfaces;
-using BankingAPILevel4.Models;
 using BankingAPILevel4.Models.Requests;
 using BankingAPILevel4.Models.Responses;
 using Microsoft.Extensions.Options;

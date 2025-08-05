@@ -1,4 +1,4 @@
-namespace BankingAPILevel4.Models;
+namespace BankingAPILevel4.Configurations;
 
 public class JwtSettings
 {

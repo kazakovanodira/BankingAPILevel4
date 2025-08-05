@@ -1,6 +1,6 @@
 using System.Text;
+using BankingAPILevel4.Configurations;
 using BankingAPILevel4.Data;
-using BankingAPILevel4.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;

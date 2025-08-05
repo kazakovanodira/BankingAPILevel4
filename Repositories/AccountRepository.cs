@@ -1,7 +1,7 @@
 using BankingAPILevel4.Data;
 using BankingAPILevel4.Interfaces;
+using BankingAPILevel4.Models;
 using BankingAPILevel4.Models.Entities;
-using BankingAPILevel4.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace BankingAPILevel4.Repositories;

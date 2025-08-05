@@ -1,5 +1,5 @@
+using BankingAPILevel4.Models;
 using BankingAPILevel4.Models.Entities;
-using BankingAPILevel4.Services;
 
 namespace BankingAPILevel4.Interfaces;
 

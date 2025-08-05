@@ -1,4 +1,4 @@
-namespace BankingAPILevel4.Services;
+namespace BankingAPILevel4.Models;
 
 public class PaginationMetadata
 {
