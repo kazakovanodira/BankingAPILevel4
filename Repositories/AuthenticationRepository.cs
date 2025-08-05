@@ -7,9 +7,9 @@ namespace BankingAPILevel4.Repositories;
 
 public class AuthenticationRepository : IAuthenticationRepository
 {
-    private readonly UserContext _context;
+    private readonly BankingDbContext _context;
     
-    public AuthenticationRepository(UserContext context)
+    public AuthenticationRepository(BankingDbContext context)
     {
         _context = context;
     }

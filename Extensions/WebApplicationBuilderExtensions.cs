@@ -62,7 +62,7 @@ public static class WebApplicationBuilderExtensions
         builder.Services.AddIdentityCore<IdentityUser>()
             .AddRoles<IdentityRole>()
             .AddSignInManager()
-            .AddEntityFrameworkStores<UserContext>();
+            .AddEntityFrameworkStores<BankingDbContext>();
 
         return builder;
     }
