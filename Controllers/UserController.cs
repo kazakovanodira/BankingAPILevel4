@@ -1,5 +1,6 @@
 using BankingAPILevel4.Interfaces;
 using BankingAPILevel4.Models.Requests;
+using BankingAPILevel4.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankingAPILevel4.Controllers;
@@ -23,7 +24,8 @@ public class UserController : ControllerBase
     /// Returns new account details.
     /// </returns>
     [HttpPost("NewAccount")]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ApiResponse<AccountDto>))]
+    [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(ApiResponse<AccountDto>))]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest request)
