@@ -32,6 +32,6 @@ public class UserController : ControllerBase
     {
         var account = await _service.CreateAccount(request);
         
-        return StatusCode(StatusCodes.Status201Created, account);
+        return StatusCode(account.HttpStatusCode, account);
     }
 }
