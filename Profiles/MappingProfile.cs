@@ -12,7 +12,5 @@ public class MappingProfile : Profile
         CreateMap<CreateAccountRequest, User>();
         CreateMap<CreateAccountRequest, UserCredential>();
         CreateMap<User, AccountDto>();
-        CreateMap<User, LoginResponse>();
-        CreateMap<LoginResponse, UserCredential>();
     }
 }
