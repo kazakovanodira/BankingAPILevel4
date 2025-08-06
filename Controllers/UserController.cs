@@ -30,14 +30,14 @@ public class UserController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest request)
     {
-        var account = await _service.CreateAccount(request);
+        var response = await _service.CreateAccount(request);
 
-        if (!account.IsSuccess)
+        if (!response.IsSuccess)
         {
-            return StatusCode(account.HttpStatusCode, account.ErrorMessage);
+            return StatusCode(response.HttpStatusCode, response.ErrorMessage);
         }
         
-        var createdAccount = account.Result;
+        var createdAccount = response.Result;
 
         return CreatedAtRoute(
             routeName: "GetAccountById",                  

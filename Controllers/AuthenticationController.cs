@@ -31,13 +31,13 @@ public class AuthenticationController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> Login([FromBody]LoginRequest login)
     {
-        var account = await _authenticationServices.GetToken(login);
+        var response = await _authenticationServices.GetToken(login);
 
-        if (!account.IsSuccess)
+        if (!response.IsSuccess)
         {
-            return StatusCode(account.HttpStatusCode, account);
+            return StatusCode(response.HttpStatusCode, response);
         }
         
-        return Ok(account);
+        return Ok(response);
     }
 }
