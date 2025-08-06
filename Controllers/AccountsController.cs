@@ -172,7 +172,6 @@ public class AccountsController : ControllerBase
     [Authorize(Roles = "Admin, User")]
     [ProducesResponseType(typeof(ConvertedBalances), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<ConvertedBalances>), StatusCodes.Status404NotFound)]
-    [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> CheckConvertedBalance(Guid accountNumber, [FromQuery] string currency)
     {
