@@ -61,8 +61,8 @@ public class AccountsController : ControllerBase
     /// <returns>The account details.</returns>
     [HttpGet("{accountNumber}", Name = "GetAccountById")]
     [Authorize(Roles = "Admin, User")]
-    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<AccountDto>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(AccountDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [Produces("application/json")]
     public async Task<IActionResult> GetAccount(Guid accountNumber)
     {
@@ -70,10 +70,10 @@ public class AccountsController : ControllerBase
         
         if (!response.IsSuccess)
         {
-            return StatusCode(response.HttpStatusCode, response);
+            return StatusCode(response.HttpStatusCode, response.ErrorMessage);
         }
         
-        return Ok(response);
+        return Ok(response.Result);
     }
     
     /// <summary>
@@ -84,8 +84,8 @@ public class AccountsController : ControllerBase
     /// <returns>The updated balance.</returns>
     [HttpPost("{accountNumber}/deposits")]
     [Authorize(Roles = "Admin, User")]
-    [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(BalanceResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> MakeDeposit(Guid accountNumber,[FromBody] TransactionRequest request)
@@ -98,10 +98,10 @@ public class AccountsController : ControllerBase
         
         if (!response.IsSuccess)
         {
-            return StatusCode(response.HttpStatusCode, response);
+            return StatusCode(response.HttpStatusCode, response.ErrorMessage);
         }
         
-        return Ok(response);
+        return Ok(response.Result);
     }
     
     /// <summary>
@@ -112,9 +112,9 @@ public class AccountsController : ControllerBase
     /// <returns>The updated balance.</returns>
     [HttpPost("{accountNumber}/withdrawals")]
     [Authorize(Roles = "Admin, User")]
-    [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(BalanceResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> MakeWithdrawal(Guid accountNumber,[FromBody] TransactionRequest request)
@@ -127,10 +127,10 @@ public class AccountsController : ControllerBase
         
         if (!response.IsSuccess)
         {
-            return StatusCode(response.HttpStatusCode, response);
+            return StatusCode(response.HttpStatusCode, response.ErrorMessage);
         }
         
-        return Ok(response);
+        return Ok(response.Result);
     }
     
     /// <summary>
@@ -140,9 +140,9 @@ public class AccountsController : ControllerBase
     /// <returns>The updated sender balance.</returns>
     [HttpPost("transfers")]
     [Authorize(Roles = "Admin, User")]
-    [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ApiResponse<BalanceResponse>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(BalanceResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> MakeTransfer([FromBody] TransactionRequest request)
@@ -156,10 +156,10 @@ public class AccountsController : ControllerBase
         
         if (!response.IsSuccess)
         {
-            return StatusCode(response.HttpStatusCode, response);
+            return StatusCode(response.HttpStatusCode, response.ErrorMessage);
         }
         
-        return Ok(response);
+        return Ok(response.Result);
     }
     
     /// <summary>
@@ -171,7 +171,7 @@ public class AccountsController : ControllerBase
     [HttpGet("{accountNumber}/balances")]
     [Authorize(Roles = "Admin, User")]
     [ProducesResponseType(typeof(ConvertedBalances), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<ConvertedBalances>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [Produces("application/json")]
     public async Task<IActionResult> CheckConvertedBalance(Guid accountNumber, [FromQuery] string currency)
     {
@@ -181,7 +181,7 @@ public class AccountsController : ControllerBase
 
         if (!response.IsSuccess)
         {
-            return StatusCode(response.HttpStatusCode, response);
+            return StatusCode(response.HttpStatusCode, response.ErrorMessage);
         }
         
         return Ok(response.Result);

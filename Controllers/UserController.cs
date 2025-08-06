@@ -41,7 +41,7 @@ public class UserController : ControllerBase
 
         return CreatedAtRoute(
             routeName: "GetAccountById",                  
-            routeValues: new { id = createdAccount.AccountNumber }, 
+            routeValues: new { accountNumber = createdAccount.AccountNumber }, 
             value: createdAccount
         );
     }

@@ -24,9 +24,9 @@ public class AuthenticationController : ControllerBase
     /// Returns an ApiResponse containing a JWT token if authentication is successful
     /// </returns>
     [HttpPost("authenticate")]
-    [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> Login([FromBody]LoginRequest login)
@@ -35,9 +35,9 @@ public class AuthenticationController : ControllerBase
 
         if (!response.IsSuccess)
         {
-            return StatusCode(response.HttpStatusCode, response);
+            return StatusCode(response.HttpStatusCode, response.ErrorMessage);
         }
         
-        return Ok(response);
+        return Ok(response.Result);
     }
 }
