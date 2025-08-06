@@ -66,12 +66,14 @@ public class AccountsController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> GetAccount(Guid accountNumber)
     {
-        var account = await _service.GetAccount(new AccountRequest(accountNumber));
-        if (!account.IsSuccess)
+        var response = await _service.GetAccount(new AccountRequest(accountNumber));
+        
+        if (!response.IsSuccess)
         {
-            return StatusCode(account.HttpStatusCode, account);
+            return StatusCode(response.HttpStatusCode, response);
         }
-        return Ok(account);
+        
+        return Ok(response);
     }
     
     /// <summary>
@@ -88,17 +90,18 @@ public class AccountsController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> MakeDeposit(Guid accountNumber,[FromBody] TransactionRequest request)
     {
-        var account = await _service.MakeDeposit(new TransactionRequest()
+        var response = await _service.MakeDeposit(new TransactionRequest()
         {
             SenderAccountNumber = accountNumber,
             Amount = request.Amount,
         });
         
-        if (!account.IsSuccess)
+        if (!response.IsSuccess)
         {
-            return StatusCode(account.HttpStatusCode, account);
+            return StatusCode(response.HttpStatusCode, response);
         }
-        return Ok(account);
+        
+        return Ok(response);
     }
     
     /// <summary>
@@ -116,17 +119,18 @@ public class AccountsController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> MakeWithdrawal(Guid accountNumber,[FromBody] TransactionRequest request)
     {
-        var account = await _service.MakeWithdraw(new TransactionRequest()
+        var response = await _service.MakeWithdraw(new TransactionRequest()
         {
             SenderAccountNumber = accountNumber,
             Amount = request.Amount,
         });
         
-        if (!account.IsSuccess)
+        if (!response.IsSuccess)
         {
-            return StatusCode(account.HttpStatusCode, account);
+            return StatusCode(response.HttpStatusCode, response);
         }
-        return Ok(account);
+        
+        return Ok(response);
     }
     
     /// <summary>
@@ -143,18 +147,19 @@ public class AccountsController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> MakeTransfer([FromBody] TransactionRequest request)
     {
-        var account = await _service.MakeTransfer(new TransactionRequest()
+        var response = await _service.MakeTransfer(new TransactionRequest()
         {
             SenderAccountNumber = request.SenderAccountNumber,
             ReceiverAccountNumber = request.ReceiverAccountNumber,
             Amount = request.Amount,
         });
         
-        if (!account.IsSuccess)
+        if (!response.IsSuccess)
         {
-            return StatusCode(account.HttpStatusCode, account);
+            return StatusCode(response.HttpStatusCode, response);
         }
-        return Ok(account);
+        
+        return Ok(response);
     }
     
     /// <summary>
